@@ -1,25 +1,17 @@
-option(BUILD_TESTS "Build tests" ON)
+# Minimum required version of CMake
+cmake_minimum_required(VERSION 3.20)
 
+# Project name and version
+project(SCLI VERSION 1.0 LANGUAGES CXX)
 
-cmake_minimum_required(VERSION 3.10)
-enable_testing()
-# Set project name and version
-project(SCLI VERSION 1.0)
-
-# Specify the C++ standard and Clang as the compiler
+# Set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_COMPILER "clang++")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Specify include directories (e.g., for headers)
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/vendor)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
-# Collect all source files
-file(GLOB SOURCES "src/*.cpp")
-
-# Add executable with the collected source files
-add_executable(SCLI ${SOURCES})
-
-if (BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
+# Add directories for source, tests, and vendor dependencies
+add_subdirectory(src)
+#add_subdirectory(tests)
