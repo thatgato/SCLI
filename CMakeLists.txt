@@ -14,4 +14,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
 # Add directories for source, tests, and vendor dependencies
 add_subdirectory(src)
-#add_subdirectory(tests)
+
+# add_subdirectory(tests)

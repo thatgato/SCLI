@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "pages/Page.h"
+#include "classes/Page.h"
 
 using namespace SCLI;
 
