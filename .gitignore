@@ -4,6 +4,7 @@ build/
 .vscode/
 .idea/
 .zed/
+.cache/
 
 # Prerequisites
 *.d
