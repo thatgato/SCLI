@@ -19,7 +19,6 @@
 
 #include "Typedefs.h"
 
-
 Page* LAST_PAGE = nullptr;
 Page* CURRENT_PAGE = nullptr;
 const str VERSION = "INDEV";
