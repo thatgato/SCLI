@@ -10,6 +10,8 @@ There is no clear roadplan as for what functions this CLI will include. I am jus
 ### WARNING
 This is my  first ever real C++ project and this project is part of my journey of learning C++. The code may not always be of the highest quality and I do not guarantee that it is bug-prone.
 
+*This project is heavily in development as of right now. I'm still building the framework of the entire CLI, there is no functionality yet.*
+
 ## Idea for the architecture of this project
 - Step 1:
   - The  user starts up the main executable file, either by directly opening it, or by manually (or automatically, if I find out how to) adding it to the system PATH variable.
@@ -29,4 +31,4 @@ As I'm new to open source, I do not really have any contributing rules as of rig
 
 ## Changelogs
 
-*The major changes can be found at [CHANGELOG.md](https://github.com/thatgato/SCLI/blob/main/CHANGELOG.md)
+*The major changes can be found at [CHANGELOG.md](https://github.com/thatgato/SCLI/blob/main/CHANGELOG.md)*
