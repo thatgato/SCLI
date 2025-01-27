@@ -1,15 +1,15 @@
 #include <iostream>
 
+#include "SCLICore.h"
 #include "classes/Page.h"
-
-using namespace SCLI;
 
 int main() {
   std::cout << "TEST" << std::endl;
 
-  Page wow("AOIFJEUDIOKDLFH");
+  Page wow("AOIFJEUDIOKDLFH", " ASddf");
 
   std::cout << wow.getName();
   std::cin.get();
+  Core::MAIN();
   return 0;
 }
