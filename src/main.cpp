@@ -2,6 +2,7 @@
 
 #include "SCLICore.h"
 #include "SCLIPageBuilder.h"
+#include "SCLIUtils.h"
 #include "classes/Page.h"
 
 int main() {
@@ -14,6 +15,8 @@ int main() {
 
     Builder::BEGIN();
 
+    // for testing purposes; remove later
+    auto* a = new Commands::CoGeo::Vectors::CVecLen();
     Core::MAIN(true);
     return 0;
 }

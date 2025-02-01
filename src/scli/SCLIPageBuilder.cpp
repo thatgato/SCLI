@@ -8,7 +8,9 @@
 
 void Builder::BEGIN() {
     std::cout << "Thingying" << std::endl;
-    uptr<Page> toplevel_test = std::make_unique<Page>("AAAA1", "bbb");
+    uptr<Page> cogeo = std::make_unique<Page>(
+        "Coordinate Geometry",
+        "Contains categories that are related to coordinate geometry.");
 
-    Core::REGISTER_TOP_LEVEL(toplevel_test);
+    Core::REGISTER_TOP_LEVEL(cogeo);
 }
