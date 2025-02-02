@@ -16,15 +16,14 @@
 #include <windows.h>
 
 #include <cassert>
-#include <chrono>
 #include <format>
 #include <iostream>
 #include <stack>
-#include <thread>
 #include <unordered_map>
 
+#include "SCLIUtils.h"
 #include "Typedefs.h"
-
+#include "classes/cmds/cogeo/vectors/CVecLen.h"
 
 sptr<Page> LAST_PAGE;
 sptr<Page> CURRENT_PAGE;
@@ -39,21 +38,8 @@ std::unordered_map<str, bool> FLAGS;
 // used for displaying the current page path
 std::stack<str> layer;
 
-void Core::Log(str msg) { std::cout << msg << std::endl; }
-
-void Core::DLog(str msg) {
-#ifdef DEBUG_LOGGING
-    std::cout << msg << std::endl;
-#else
-    if (true) {
-        std::cout << msg << std::endl;
-    }
-#endif
-}
-
 void Core::MAIN(bool isFirstLoop) {
     system("cls");
-    std::this_thread::sleep_for(std::chrono::seconds(1));
 
     if (isFirstLoop) {
         SetConsoleTitleA(std::format("SCLI Version {}", VERSION).c_str());
@@ -64,6 +50,14 @@ void Core::MAIN(bool isFirstLoop) {
 
         Core::DISPLAY_PAGE();
     }
+
+    Utils::Log("Testing mesting mmmmmm what is this");
+
+    auto* aaaaa = new Commands::CoGeo::Vectors::CVecLen();
+
+    aaaaa->Run();
+
+    delete aaaaa;
 
     str inp;
     std::cin >> inp;
@@ -79,10 +73,10 @@ void Core::PROCESS_CMD(str cmdInputString) {}
 void Core::DISPLAY_PAGE(const sptr<Page>& pPage) {}
 
 void Core::DISPLAY_PAGE() {
-    Core::Log("Displaying top-level pages");
+    Utils::Log("Displaying top-level pages");
 
     for (auto& pPage : TOP_LEVEL_PAGES) {
-        Core::Log(std::format("{} -> {}", pPage->getName(), pPage->getDesc()));
+        Utils::Log(std::format("{} -> {}", pPage->getName(), pPage->getDesc()));
     }
 }
 

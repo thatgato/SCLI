@@ -6,4 +6,5 @@ class Utils {
     Utils() = delete;
 
     static void Log(const str& msg);
+    static void DLog(const str& msg);
 };

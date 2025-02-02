@@ -20,8 +20,6 @@ void REGISTER_TOP_LEVEL(uptr<Page>& pPage);
 sptr<Page> GET_CURRENT_PAGE();
 sptr<Page> GET_LAST_PAGE();
 str GET_VERSION();
-void DLog(str msg);
-void Log(str msg);
 bool GET_FLAG(str flagName);
 
 }  // namespace Core

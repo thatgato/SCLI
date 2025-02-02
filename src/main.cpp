@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 
 #include "SCLICore.h"
@@ -6,17 +8,16 @@
 #include "classes/Page.h"
 
 int main() {
-    std::cout << "TEST" << std::endl;
+    Utils::Log("TEST");
 
     Page wow("AOIFJEUDIOKDLFH", " ASddf");
 
-    std::cout << wow.getName();
-    std::cin.get();
+    Utils::Log(wow.getName());
+    str ass;
+    std::getline(std::cin, ass);
 
     Builder::BEGIN();
 
-    // for testing purposes; remove later
-    auto* a = new Commands::CoGeo::Vectors::CVecLen();
     Core::MAIN(true);
     return 0;
 }
