@@ -13,7 +13,7 @@ class Command {
     Command(const str& cName, const str& cDesc, const str& cHelpDesc);
 
     virtual ~Command() = default;
-    virtual ECommandResult Run();
+    virtual ECommandResult Run() = 0;
 
     str GetName();
     str GetDesc();

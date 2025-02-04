@@ -25,8 +25,8 @@
 #include "Typedefs.h"
 #include "classes/cmds/cogeo/vectors/CVecLen.h"
 
-sptr<Page> LAST_PAGE;
-sptr<Page> CURRENT_PAGE;
+sptr<Page> LAST_PAGE = nullptr;
+sptr<Page> CURRENT_PAGE = nullptr;
 
 vec<uptr<Page>> TOP_LEVEL_PAGES;
 
@@ -37,6 +37,19 @@ std::unordered_map<str, bool> FLAGS;
 // Basically the value storing the names of the loaded pages in a LIFO manner;
 // used for displaying the current page path
 std::stack<str> layer;
+
+/* -------------------------------------------------------------------------- */
+/*                              Private functions                             */
+/* -------------------------------------------------------------------------- */
+
+// Displays the current directory, the info about the current page, etc.
+void displayTopInfo() {
+    Utils::Log(Utils::StrStyle::red + "Test!" + Utils::StrStyle::reset);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                      Core functions exposed through .h                     */
+/* -------------------------------------------------------------------------- */
 
 void Core::MAIN(bool isFirstLoop) {
     system("cls");
@@ -51,7 +64,9 @@ void Core::MAIN(bool isFirstLoop) {
         Core::DISPLAY_PAGE();
     }
 
-    Utils::Log("Testing mesting mmmmmm what is this");
+    displayTopInfo();
+
+    // Utils::Log("");
 
     auto* aaaaa = new Commands::CoGeo::Vectors::CVecLen();
 

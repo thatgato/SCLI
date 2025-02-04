@@ -5,6 +5,6 @@ namespace Commands::CoGeo::Vectors {
 class CVecLen : public Command {
    public:
     CVecLen();
-    ECommandResult Run() override;
+    ECommandResult Run();
 };
 };  // namespace Commands::CoGeo::Vectors
