@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "classes/core/Page.h"
+#include "scli/classes/Page.h"
 #include "types/general.h"
 
 /* -------------------------------------------------------------------------- */

@@ -38,10 +38,9 @@
 #include <stack>
 #include <unordered_map>
 
-#include "classes/cmds/cogeo/vectors/CVecLen.h"
 #include "scli/Utils.h"
+#include "scli/classes/cmds/cogeo/vectors/CVecLen.h"  // remove later, only here for testing
 #include "types/general.h"
-
 
 sptr<Page> LAST_PAGE = nullptr;
 sptr<Page> CURRENT_PAGE = nullptr;
@@ -56,14 +55,14 @@ std::unordered_map<str, bool> FLAGS;
 // used for displaying the current page path
 std::stack<str> layer;
 
+static Utils::Logger Logger("Core");
+
 /* -------------------------------------------------------------------------- */
 /*                              Private functions                             */
 /* -------------------------------------------------------------------------- */
 
 // Displays the current directory, the info about the current page, etc.
-void displayTopInfo() {
-    Utils::Log(Utils::StrStyle::red + "Test!" + Utils::StrStyle::reset);
-}
+void displayTopInfo() { Logger.Log("Test"); }
 
 /* -------------------------------------------------------------------------- */
 /*                      Core functions exposed through .h                     */
@@ -83,8 +82,6 @@ void Core::MAIN(bool isFirstLoop) {
     }
 
     displayTopInfo();
-
-    // Utils::Log("");
 
     auto* aaaaa = new Commands::CoGeo::Vectors::CVecLen();
 
@@ -106,10 +103,10 @@ void Core::PROCESS_CMD(str cmdInputString) {}
 void Core::DISPLAY_PAGE(const sptr<Page>& pPage) {}
 
 void Core::DISPLAY_PAGE() {
-    Utils::Log("Displaying top-level pages");
+    Logger.Log("Displaying top-level pages");
 
     for (auto& pPage : TOP_LEVEL_PAGES) {
-        Utils::Log(std::format("{} -> {}", pPage->getName(), pPage->getDesc()));
+        Logger.Log(std::format("{} -> {}", pPage->getName(), pPage->getDesc()));
     }
 }
 

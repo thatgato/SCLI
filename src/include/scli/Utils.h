@@ -16,6 +16,7 @@
  */
 
 #pragma once
+#undef ERROR  // Weird wingdi.h shit? This conflicts with LogLevel::ERROR :3
 #include <stack>
 
 #include "types/chrono.h"
@@ -23,6 +24,27 @@
 
 class Utils {
    public:
+    class Logger {
+       private:
+        str _identifier;
+
+       public:
+        enum class LogLevel {
+            DEBUG_INFO,
+            DEBUG_WARN,
+            DEBUG_ERROR,
+            INFO,
+            WARN,
+            ERROR,
+        };
+        Logger(const str& fileName);
+        void Log(const str& msg);  // Defaults to LogLevel.Info
+        void Log(const str& msg, LogLevel level);
+        static void Out(
+            const str& msg);  // basically a shorthand for std::cout << msg
+                              // << "\n";
+    };
+
     class Clock {  // Handles simple "x amount of time has passed" benchmarking
        private:
         time_point_t<high_res_clock> start;
@@ -36,6 +58,7 @@ class Utils {
        public:
         static str orange;
         static str red;
+        static str bright_red;
         static str green;
         static str yellow;
         static str cyan;
@@ -57,8 +80,9 @@ class Utils {
 
     Utils() = delete;
 
-    static void Log(const str& msg);
-    static void DLog(const str& msg);
-
     static str GetPageStackDirectory(std::stack<str> stack);
 };
+
+// Utils specific type definitions, for easier typing
+using SStyle = Utils::StrStyle;
+using LogLevel = Utils::Logger::LogLevel;

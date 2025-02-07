@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "classes/core/Command.h"
+#include "scli/classes/Command.h"
 #include "types/general.h"
 
 class Page {
@@ -30,11 +30,13 @@ class Page {
    public:
     Page(const str& pageName, const str& descStr);
 
-    void LinkChild(Page& cPage);
+    void LinkChild(Page& pPage);
     void LinkParent(Page& pPage);
 
     void AddCommand(Command& pCommand);
 
     str getName() const;
     str getDesc() const;
+
+    bool isCommandPage();
 };

@@ -18,13 +18,14 @@
 
 #include <thread>
 
-#include "classes/core/Page.h"
 #include "scli/Core.h"
 #include "scli/Utils.h"
+#include "scli/classes/Page.h"
 
+Utils::Logger Logger("PageBuilder");
 
 void Builder::BEGIN() {
-    Utils::Log("Building commands and pages...");
+    Logger.Log("Building commands and pages...");
 
     Utils::Clock clock;
     clock.START();
@@ -36,7 +37,7 @@ void Builder::BEGIN() {
     Core::REGISTER_TOP_LEVEL(cogeo);
 
     auto dur = clock.END();
-    Utils::Log(
+    Logger.Log(
         std::format("Done! Building pages and commands took approximately "
                     "{:.4f}ms! Starting in a second...",
                     dur.count()));

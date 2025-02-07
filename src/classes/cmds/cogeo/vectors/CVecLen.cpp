@@ -15,10 +15,13 @@
  * ==========================================================
  */
 
-#include "classes/cmds/cogeo/vectors/CVecLen.h"
+#include "scli/classes/cmds/cogeo/vectors/CVecLen.h"
 
 #include "scli/Utils.h"
 using namespace Commands::CoGeo::Vectors;
+
+static Utils::Logger Logger("cmds/cogeo/vectors/CVecLen");
+
 // Constructor
 CVecLen::CVecLen()
     : Command("veclen", "Compute the length of a vector",
@@ -29,6 +32,6 @@ CVecLen::CVecLen()
               "provided coordinates and the pythagorean theorem.") {};
 
 ECommandResult CVecLen::Run() {
-    Utils::Log("AOJKSSSSSSSSSSSSSSSSSSSSS testingggggggggggg");
+    Logger.Log("AOJKSSSSSSSSSSSSSSSSSSSSS testingggggggggggg");
     return SUCCESS;
 }

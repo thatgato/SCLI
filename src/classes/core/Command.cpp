@@ -13,7 +13,7 @@
  * ==========================================================
  */
 
-#include "classes/core/Command.h"
+#include "scli/classes/Command.h"
 
 Command::Command(const str& cName, const str& cDesc, const str& cHelpDesc)
     : name(cName), desc(cDesc), help_desc(cHelpDesc) {}

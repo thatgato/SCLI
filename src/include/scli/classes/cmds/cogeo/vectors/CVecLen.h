@@ -16,7 +16,7 @@
  */
 
 #pragma once
-#include "classes/core/Command.h"
+#include "scli/classes/Command.h"
 
 namespace Commands::CoGeo::Vectors {
 class CVecLen : public Command {
