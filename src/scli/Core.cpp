@@ -1,3 +1,20 @@
+/**
+ * ==========================================================
+ * @file        Core.h
+ * @brief       SCLI Core Functions
+ *
+ * @author      thatgato
+ * @date        2025-02-07
+ * ==========================================================
+ *
+ * @details
+ * The core functions of SCLI. Things like controlling which page to show, when
+ * to flush the CLI, the main loop and registering top level pages all happen
+ * here. This is the magical core of SCLI.
+ *
+ * ==========================================================
+ */
+
 /*
     This file manages the core interactions in the CLI. Here is where the page
    switching, loading and clearing happens. We also execute commands from there.
@@ -11,7 +28,7 @@
     ? my math classes are in the IT classroom...
 */
 
-#include "SCLICore.h"
+#include "scli/Core.h"
 
 #include <windows.h>
 
@@ -21,9 +38,10 @@
 #include <stack>
 #include <unordered_map>
 
-#include "SCLIUtils.h"
-#include "Typedefs.h"
 #include "classes/cmds/cogeo/vectors/CVecLen.h"
+#include "scli/Utils.h"
+#include "types/general.h"
+
 
 sptr<Page> LAST_PAGE = nullptr;
 sptr<Page> CURRENT_PAGE = nullptr;

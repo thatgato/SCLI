@@ -1,8 +1,26 @@
-#include "SCLIUtils.h"
+
+/**
+ * ==========================================================
+ * @file        Utils.h
+ * @brief       Handles all SCLI Utility functionality, such as StrStyles and
+ * the Clock class for benchmarking.
+ *
+ * @author      thatgato
+ * @date        2025-02-07
+ * ==========================================================
+ *
+ * @details
+ * Any SCLI related utility functions and classes should be defined here and in
+ * src/scli/Utils.cpp
+ *
+ * ==========================================================
+ */
+
+#include "scli/Utils.h"
 
 #include <iostream>
 
-#include "Typedefs.h"
+#include "types/general.h"
 
 void Utils::Log(const str& msg) { std::cout << msg << "\n"; };
 

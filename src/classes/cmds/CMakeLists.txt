@@ -1,0 +1,5 @@
+file(GLOB_RECURSE CMD_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+add_library(COMMANDS STATIC ${CMD_SOURCES})
+
+target_include_directories(COMMANDS PRIVATE "${PROJECT_SOURCE_DIR}/src/include")

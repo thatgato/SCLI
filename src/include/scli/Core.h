@@ -1,7 +1,24 @@
+/**
+ * ==========================================================
+ * @file        Core.h
+ * @brief       SCLI Core Functions
+ *
+ * @author      thatgato
+ * @date        2025-02-07
+ * ==========================================================
+ *
+ * @details
+ * The core functions of SCLI. Things like controlling which page to show, when
+ * to flush the CLI, the main loop and registering top level pages all happen
+ * here. This is the magical core of SCLI.
+ *
+ * ==========================================================
+ */
+
 #pragma once
 
-#include "Typedefs.h"
-#include "classes/Page.h"
+#include "classes/core/Page.h"
+#include "types/general.h"
 
 /* -------------------------------------------------------------------------- */
 /*                 Main functions exposed through the SCLICore                */

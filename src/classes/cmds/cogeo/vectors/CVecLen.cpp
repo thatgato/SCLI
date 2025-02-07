@@ -1,6 +1,23 @@
+/**
+ * ==========================================================
+ * @file        CVecLen.cpp
+ * @brief       CoordinateGeometry/CVecLen --> Command to calculate the length
+ * of an n-dimensional vector
+ *
+ * @author      thatgato
+ * @date        2025-02-07
+ * ==========================================================
+ *
+ * @details
+ * This is a command under coordinate geometry, that calculates the length of an
+ * n-dimensional vector.
+ *
+ * ==========================================================
+ */
+
 #include "classes/cmds/cogeo/vectors/CVecLen.h"
 
-#include "SCLIUtils.h"
+#include "scli/Utils.h"
 using namespace Commands::CoGeo::Vectors;
 // Constructor
 CVecLen::CVecLen()
