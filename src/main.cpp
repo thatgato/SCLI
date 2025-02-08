@@ -15,8 +15,6 @@
  * ==========================================================
  */
 
-#include <iostream>
-
 #include "scli/Core.h"
 #include "scli/PageBuilder.h"
 #include "scli/Utils.h"
@@ -24,21 +22,19 @@
 int main() {
     Utils::Logger Logger("main");
 
-    Utils::Logger::Out(
-        "This is a test of the logging functions! Remove later..!:3");
-    Logger.Log("Test message! Am I working? I hope so...");
-    Logger.Log("Test message! Am I working? I hope so...",
-               LogLevel::DEBUG_INFO);
-    Logger.Log("Test message! Am I working? I hope so...",
-               LogLevel::DEBUG_WARN);
-    Logger.Log("Test message! Am I working? I hope so...",
-               LogLevel::DEBUG_ERROR);
-    Logger.Log("Test message! Am I working? I hope so...", LogLevel::INFO);
-    Logger.Log("Test message! Am I working? I hope so...", LogLevel::WARN);
-    Logger.Log("Test message! Am I working? I hope so...", LogLevel::ERROR);
-
-    str ass;
-    std::getline(std::cin, ass);
+    // Utils::Logger::Out(
+    //     "This is a test of the logging functions! Remove later..!:3");
+    // Logger.Log("Test message! Am I working? I hope so...");
+    // Logger.Log("Test message! Am I working? I hope so...",
+    //            LogLevel::DEBUG_INFO);
+    // Logger.Log("Test message! Am I working? I hope so...",
+    //            LogLevel::DEBUG_WARN);
+    // Logger.Log("Test message! Am I working? I hope so...",
+    //            LogLevel::DEBUG_ERROR);
+    // Logger.Log("Test message! Am I working? I hope so...", LogLevel::INFO);
+    // Logger.Log("Test message! Am I working? I hope so...", LogLevel::WARN);
+    // Logger.Log("Test message! Am I working? I hope so...", LogLevel::ERROR);
+    Logger.Log("Calling page builder!");
 
     Builder::BEGIN();
 

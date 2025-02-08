@@ -18,8 +18,11 @@
 
 #include "scli/Utils.h"
 
+#include <exception>
 #include <format>
 #include <iostream>
+#include <string>
+#include <utility>
 
 #include "types/general.h"
 
@@ -31,8 +34,8 @@ Utils::Logger::Logger(const str& fileName) : _identifier(fileName) {}
 
 void Utils::Logger::Log(const str& msg) {
     // We default to LogLevel.Info in this overload
-    str out = std::format("{}{}[{}] [{}]: {}{}", SStyle::italic, SStyle::white,
-                          _identifier, "INFO", msg, SStyle::reset);
+    str out = std::format("{}[{}] [{}]: {}{}", SStyle::white, _identifier,
+                          "INFO", msg, SStyle::reset);
 
     std::cout << out << "\n";
 }
@@ -82,6 +85,22 @@ void Utils::Logger::Log(const str& msg, LogLevel level) {
 }
 
 void Utils::Logger::Out(const str& msg) { std::cout << msg << "\n"; }
+void Utils::Logger::Out(const str& msg, bool noNewline) {
+    std::cout << msg << (noNewline ? "" : "\n");
+}
+
+str Utils::Logger::In() {
+    Utils::Logger::Out(">> ", true);
+    str res;
+    std::cin >> res;
+    return res;
+}
+
+Utils::Logger ULOGGER("Utils");
+
+/* -------------------------------------------------------------------------- */
+/*                                    Other                                   */
+/* -------------------------------------------------------------------------- */
 
 str Utils::GetPageStackDirectory(std::stack<str> stack) {
     std::stack<str> temp;
@@ -90,15 +109,38 @@ str Utils::GetPageStackDirectory(std::stack<str> stack) {
         stack.pop();
     }
 
-    str path;
+    str path = SStyle::Quick::note;  // Start off with this style
     while (!temp.empty()) {
+        if (temp.size() == 1)
+            path += SStyle::reset + SStyle::white + SStyle::italic;
+
         path += temp.top();
         temp.pop();
-        if (!temp.empty()) path += "/";
-    }
 
+        if (!temp.empty()) {
+            path += "/";
+        }
+    }
+    path += SStyle::reset;  // Reset the style so we don't fuck up other things
+                            // being printed after this
     return path;
 }
+
+std::pair<bool, int> Utils::TryConvertStrToInt(const str& convert) {
+    bool success = false;
+    int conv = 0;
+    try {
+        conv = std::stoi(convert);
+        success = true;
+    } catch (std::exception& e) {
+        ULOGGER.Log(e.what(), Logger::LogLevel::DEBUG_WARN);
+    }
+    return std::pair<bool, int>(success, conv);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                Utils::Clock                                */
+/* -------------------------------------------------------------------------- */
 
 void Utils::Clock::START() { start = high_res_clock::now(); }
 
@@ -117,6 +159,8 @@ str Utils::StrStyle::green = "\033[32m";
 str Utils::StrStyle::yellow = "\033[33m";
 str Utils::StrStyle::cyan = "\033[36m";
 str Utils::StrStyle::white = "\033[37m";
+str Utils::StrStyle::gray = "\033[1;30m";
+str Utils::StrStyle::light_gray = "\033[0;37m";
 
 str Utils::StrStyle::on_red = "\033[41m";
 str Utils::StrStyle::on_green = "\033[42m";
@@ -130,3 +174,6 @@ str Utils::StrStyle::underline = "\033[4m";
 str Utils::StrStyle::blink = "\033[5m";
 
 str Utils::StrStyle::reset = "\033[00m";
+
+str Utils::StrStyle::Quick::note =
+    Utils::StrStyle::italic + Utils::StrStyle::gray;

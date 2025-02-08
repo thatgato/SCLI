@@ -24,19 +24,22 @@ class Page {
     str desc;
 
     vec<uptr<Page>> child_pages;
-    wptr<Page> parent_page;
+    Page* parent_page;
     vec<uptr<Command>> child_commands;
 
    public:
     Page(const str& pageName, const str& descStr);
 
-    void LinkChild(Page& pPage);
+    void LinkChild(uptr<Page>& pPage);
     void LinkParent(Page& pPage);
 
     void AddCommand(Command& pCommand);
 
     str getName() const;
     str getDesc() const;
+    vec<uptr<Page>>& getChildPages();
+    Page* getParentPage();
+    vec<uptr<Command>>& getChildCommands();
 
     bool isCommandPage();
 };

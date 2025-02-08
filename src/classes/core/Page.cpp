@@ -22,13 +22,18 @@ static Utils::Logger Logger("Core::Page");
 Page::Page(const str& pageName, const str& descStr)
     : name(pageName), desc(descStr) {};
 
-void Page::LinkChild(Page& pPage) {};
-void Page::LinkParent(Page& pPage) {};
+void Page::LinkChild(uptr<Page>& pPage) {
+    child_pages.push_back(std::move(pPage));
+};
+void Page::LinkParent(Page& pPage) { parent_page = &pPage; };
 
 void Page::AddCommand(Command& pCommand) {};
 
 str Page::getName() const { return name; }
 str Page::getDesc() const { return desc; }
+vec<uptr<Page>>& Page::getChildPages() { return child_pages; }
+Page* Page::getParentPage() { return parent_page; }
+vec<uptr<Command>>& Page::getChildCommands() { return child_commands; }
 
 /**
  * @brief Whether this page functions as a command page. Command pages don't

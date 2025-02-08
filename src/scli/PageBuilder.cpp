@@ -16,6 +16,7 @@
 
 #include "scli/PageBuilder.h"
 
+#include <memory>
 #include <thread>
 
 #include "scli/Core.h"
@@ -30,10 +31,14 @@ void Builder::BEGIN() {
     Utils::Clock clock;
     clock.START();
 
-    uptr<Page> cogeo = std::make_unique<Page>(
+    sptr<Page> cogeo = std::make_shared<Page>(
         "Coordinate Geometry",
         "Contains categories that are related to coordinate geometry.");
 
+    uptr<Page> vectors =
+        std::make_unique<Page>("Vectors", "THIS IS TESTING, Do later!!");
+
+    cogeo->LinkChild(vectors);
     Core::REGISTER_TOP_LEVEL(cogeo);
 
     auto dur = clock.END();
@@ -42,5 +47,5 @@ void Builder::BEGIN() {
                     "{:.4f}ms! Starting in a second...",
                     dur.count()));
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 }

@@ -43,6 +43,8 @@ class Utils {
         static void Out(
             const str& msg);  // basically a shorthand for std::cout << msg
                               // << "\n";
+        static void Out(const str& msg, bool noNewLine);
+        static str In();
     };
 
     class Clock {  // Handles simple "x amount of time has passed" benchmarking
@@ -63,6 +65,8 @@ class Utils {
         static str yellow;
         static str cyan;
         static str white;
+        static str gray;
+        static str light_gray;
 
         static str on_red;
         static str on_green;
@@ -76,11 +80,19 @@ class Utils {
         static str blink;
 
         static str reset;
+
+        class Quick {
+           public:
+            static str note;
+        };
     };
 
     Utils() = delete;
 
     static str GetPageStackDirectory(std::stack<str> stack);
+    // Tries to convert the provided string into an integer. Returns (true, int)
+    // if it succeeded, otherwise (false, 0)
+    static std::pair<bool, int> TryConvertStrToInt(const str& convert);
 };
 
 // Utils specific type definitions, for easier typing

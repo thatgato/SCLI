@@ -14,9 +14,11 @@
  */
 
 #pragma once
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
 
 using str = std::string;
 
@@ -31,3 +33,5 @@ using wptr = std::weak_ptr<T>;
 
 template <typename T>
 using vec = std::vector<T>;
+
+using u8 = uint8_t;

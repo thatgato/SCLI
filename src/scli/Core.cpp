@@ -34,19 +34,23 @@
 
 #include <cassert>
 #include <format>
-#include <iostream>
 #include <stack>
+#include <string>
 #include <unordered_map>
 
 #include "scli/Utils.h"
-#include "scli/classes/cmds/cogeo/vectors/CVecLen.h"  // remove later, only here for testing
 #include "types/general.h"
 
-sptr<Page> LAST_PAGE = nullptr;
-sptr<Page> CURRENT_PAGE = nullptr;
+// Pages
+Page* LAST_PAGE = nullptr;
+Page* CURRENT_PAGE = nullptr;
 
-vec<uptr<Page>> TOP_LEVEL_PAGES;
+vec<sptr<Page>> TOP_LEVEL_PAGES;
+std::unordered_map<int, Page*>
+    CurrentlyListedPages;  // Which pages are being displayed right now, by
+                           // index?
 
+// CLI things
 const str VERSION = "INDEV";
 
 std::unordered_map<str, bool> FLAGS;
@@ -62,7 +66,41 @@ static Utils::Logger Logger("Core");
 /* -------------------------------------------------------------------------- */
 
 // Displays the current directory, the info about the current page, etc.
-void displayTopInfo() { Logger.Log("Test"); }
+void displayTopInfo() {
+    Logger.Out(SStyle::Quick::note +
+               std::format("SCLI Version {}{}\n", VERSION, SStyle::reset));
+    Logger.Out(SStyle::Quick::note + "Current page directory:" + SStyle::reset);
+    Logger.Out(SStyle::Quick::note + Utils::GetPageStackDirectory(layer) +
+               SStyle::reset + "\n");
+}
+
+// Runs the first loop setup, like changing the console window title
+void firstLoopSetup() {
+    SetConsoleTitleA(std::format("SCLI Version {}", VERSION).c_str());
+
+    //! FLAGS
+    FLAGS["FDebugLogging"] = false;
+
+    Core::DISPLAY_PAGE();
+}
+
+// Basically logs to the console telling the user how they can use the app.
+void logControlNotice() {
+    Logger.Out(SStyle::Quick::note +
+               "To select a page / command, type the index of the page, which "
+               "is shown in the [] brackets before the page name." +
+               SStyle::reset);
+    // Drastic situations call for drastic measures...
+    Logger.Out(std::format(
+        "{}To exit the application, type {}{}\"{}\"{}{} or {}{}\"{}\"{}.{} To "
+        "return to the root directory, type {}{}\"{}\"{}{} or "
+        "{}{}\"{}\"{}{}.{}\n\n",
+        SStyle::Quick::note, SStyle::reset, SStyle::white, "exit",
+        SStyle::reset, SStyle::Quick::note, SStyle::reset, SStyle::white, "e",
+        SStyle::reset, SStyle::Quick::note, SStyle::reset, SStyle::white,
+        "root", SStyle::reset, SStyle::Quick::note, SStyle::reset,
+        SStyle::white, "r", SStyle::reset, SStyle::Quick::note, SStyle::reset));
+}
 
 /* -------------------------------------------------------------------------- */
 /*                      Core functions exposed through .h                     */
@@ -70,47 +108,110 @@ void displayTopInfo() { Logger.Log("Test"); }
 
 void Core::MAIN(bool isFirstLoop) {
     system("cls");
+    CurrentlyListedPages.clear();
 
     if (isFirstLoop) {
-        SetConsoleTitleA(std::format("SCLI Version {}", VERSION).c_str());
-        layer.push("root");
-
-        //! FLAGS
-        FLAGS["FDebugLogging"] = false;
-
-        Core::DISPLAY_PAGE();
+        std::stack<str> emptyStack;
+        layer.swap(emptyStack);
+        layer.push("root");  // This is needed so we can display the root
+                             // directory before displaying the top level pages
     }
 
     displayTopInfo();
+    if (isFirstLoop) firstLoopSetup();
 
-    auto* aaaaa = new Commands::CoGeo::Vectors::CVecLen();
+    for (auto& pair : CurrentlyListedPages) {
+        Logger.Out(std::to_string(pair.first) + "-->" + pair.second->getName());
+    }
 
-    aaaaa->Run();
+    // If this is not the first loop (root dir) then display all the child pages
+    // of the current page
+    if (!isFirstLoop) {
+        DISPLAY_PAGE(*CURRENT_PAGE);
+    }
 
-    delete aaaaa;
+    /* ------------------------ Get the input here ------------------------ */
+    str inp = Logger.In();
 
-    str inp;
-    std::cin >> inp;
+    //* Check for which page we selected and if it is even valid
+    std::pair<bool, int> res = Utils::TryConvertStrToInt(inp);
+    int inputtedIdx = res.second;
 
+    // ? Is the input even convertable into a number?
+    if (!res.first) {
+        Logger.Log(
+            "Failed to convert your input into a number! Are you sure you "
+            "typed it correctly?",
+            LogLevel::WARN);
+        Logger.In();
+        MAIN(isFirstLoop);
+        return;
+    }
+
+    // ? Is the inputted index not resolving to an actual page that is being
+    // displayed?
+    if (CurrentlyListedPages.find(inputtedIdx) == CurrentlyListedPages.end()) {
+        Logger.Log("There is no page with this index!", LogLevel::WARN);
+        Logger.In();
+        MAIN(isFirstLoop);
+        return;
+    }
+
+    Logger.Out("All checks passed, should enter page now!!!!");
+
+    // ? Entering the page
+    layer.push(CurrentlyListedPages[inputtedIdx]->getName());
+    // Listed pages val gets cleared when the function is reinvoked..!
+
+    CURRENT_PAGE = CurrentlyListedPages[inputtedIdx];
     if (inp != "e" &&
         inp != "exit") {  // just for testing, delete later and rework
         MAIN(false);
+        return;
     }
 }
 
 void Core::PROCESS_CMD(str cmdInputString) {}
 
-void Core::DISPLAY_PAGE(const sptr<Page>& pPage) {}
+void Core::DISPLAY_PAGE(const Page& pPage) {
+    Logger.Out(std::format("{}Displaying sub-pages of \"{}\"{}", SStyle::green,
+                           CURRENT_PAGE->getName(), SStyle::reset));
 
-void Core::DISPLAY_PAGE() {
-    Logger.Log("Displaying top-level pages");
+    logControlNotice();
 
-    for (auto& pPage : TOP_LEVEL_PAGES) {
-        Logger.Log(std::format("{} -> {}", pPage->getName(), pPage->getDesc()));
+    u8 idx = 1;
+    for (auto& pPage : CURRENT_PAGE->getChildPages()) {
+        //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
+        Logger.Out(
+            std::format("{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold,
+                        idx, pPage->getName(), SStyle::reset,
+                        SStyle::Quick::note, pPage->getDesc(), SStyle::reset));
+        CurrentlyListedPages[idx] =
+            pPage.get();  // Get raw pointer to the page... I hope no pointer
+                          // fuckeries will happen in the future lol
+        idx++;
     }
 }
 
-void Core::REGISTER_TOP_LEVEL(uptr<Page>& pPage) {
+void Core::DISPLAY_PAGE() {
+    Logger.Out(SStyle::green + "Displaying top-level pages" + SStyle::reset);
+    logControlNotice();
+
+    u8 idx = 1;
+    for (auto& pPage : TOP_LEVEL_PAGES) {
+        //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
+        Logger.Out(
+            std::format("{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold,
+                        idx, pPage->getName(), SStyle::reset,
+                        SStyle::Quick::note, pPage->getDesc(), SStyle::reset));
+        CurrentlyListedPages[idx] = pPage.get();
+        idx++;
+    }
+
+    Logger.Out("\n");
+}
+
+void Core::REGISTER_TOP_LEVEL(sptr<Page>& pPage) {
     TOP_LEVEL_PAGES.push_back(std::move(pPage));
 }
 
@@ -119,7 +220,7 @@ void SET_FLAG(const str& flagName, bool val) {
     FLAGS[flagName] = val;
 }
 
-sptr<Page> Core::GET_CURRENT_PAGE() { return CURRENT_PAGE; }
-sptr<Page> Core::GET_LAST_PAGE() { return LAST_PAGE; }
+Page* Core::GET_CURRENT_PAGE() { return CURRENT_PAGE; }
+Page* Core::GET_LAST_PAGE() { return LAST_PAGE; }
 str Core::GET_VERSION() { return VERSION; }
 bool Core::GET_FLAG(str flagName) { return FLAGS.at(flagName); }

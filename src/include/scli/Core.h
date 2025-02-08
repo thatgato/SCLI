@@ -30,12 +30,12 @@ void MAIN(bool isFirstLoop);  // Main loop !! keep track of running main loops
 
 void PROCESS_CMD(str cmdInputString);
 void DISPLAY_PAGE();
-void DISPLAY_PAGE(const sptr<Page>& pPage);
+void DISPLAY_PAGE(const Page& pPage);
 void SET_FLAG(const str& flagName, bool val);
-void REGISTER_TOP_LEVEL(uptr<Page>& pPage);
+void REGISTER_TOP_LEVEL(sptr<Page>& pPage);
 
-sptr<Page> GET_CURRENT_PAGE();
-sptr<Page> GET_LAST_PAGE();
+Page* GET_CURRENT_PAGE();
+Page* GET_LAST_PAGE();
 str GET_VERSION();
 bool GET_FLAG(str flagName);
 
