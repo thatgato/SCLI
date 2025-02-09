@@ -1,4 +1,4 @@
-add_library(SCLI
+add_library(SCLI STATIC
     Core.cpp
     PageBuilder.cpp
     Utils.cpp
