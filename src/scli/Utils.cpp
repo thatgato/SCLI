@@ -92,7 +92,7 @@ void Utils::Logger::Out(const str& msg, bool noNewline) {
 str Utils::Logger::In() {
     Utils::Logger::Out(">> ", true);
     str res;
-    std::cin >> res;
+    std::getline(std::cin, res);
     return res;
 }
 

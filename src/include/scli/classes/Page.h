@@ -30,10 +30,10 @@ class Page {
    public:
     Page(const str& pageName, const str& descStr);
 
-    void LinkChild(uptr<Page>& pPage);
+    void LinkChild(uptr<Page>&& pPage);
     void LinkParent(Page& pPage);
 
-    void AddCommand(Command& pCommand);
+    void AddCommand(uptr<Command>&& pCommand);
 
     str getName() const;
     str getDesc() const;

@@ -22,12 +22,14 @@ static Utils::Logger Logger("Core::Page");
 Page::Page(const str& pageName, const str& descStr)
     : name(pageName), desc(descStr) {};
 
-void Page::LinkChild(uptr<Page>& pPage) {
+void Page::LinkChild(uptr<Page>&& pPage) {
     child_pages.push_back(std::move(pPage));
 };
 void Page::LinkParent(Page& pPage) { parent_page = &pPage; };
 
-void Page::AddCommand(Command& pCommand) {};
+void Page::AddCommand(uptr<Command>&& pCommand) {
+    child_commands.push_back(std::move(pCommand));
+};
 
 str Page::getName() const { return name; }
 str Page::getDesc() const { return desc; }
@@ -43,7 +45,7 @@ vec<uptr<Command>>& Page::getChildCommands() { return child_commands; }
  * @return false
  */
 bool Page::isCommandPage() {
-    if (child_commands.empty() && child_pages.empty())
+    if (!child_commands.empty() && !child_pages.empty())
         Logger.Log(
             "isCommandPage() -> This specific page has child commands, but "
             "also child pages! This should not happen! Please fix this "

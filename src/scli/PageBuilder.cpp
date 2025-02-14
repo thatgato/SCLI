@@ -22,6 +22,7 @@
 #include "scli/Core.h"
 #include "scli/Utils.h"
 #include "scli/classes/Page.h"
+#include "scli/classes/cmds/cogeo/vectors/CVecLen.h"
 
 Utils::Logger Logger("PageBuilder");
 
@@ -31,17 +32,34 @@ void Builder::BEGIN() {
     Utils::Clock clock;
     clock.START();
 
-    sptr<Page> cogeo = std::make_shared<Page>(
+    /* --------------------------- Coordinate geometry -------------------------- */
+
+    // ? CoGeo
+    uptr<Page> cogeo = std::make_unique<Page>(
         "Coordinate Geometry",
         "Contains categories that are related to coordinate geometry.");
 
+    // ? Vectors
     uptr<Page> vectors =
         std::make_unique<Page>("Vectors", "THIS IS TESTING, Do later!!");
 
-    cogeo->LinkChild(vectors);
-    Core::REGISTER_TOP_LEVEL(cogeo);
+    /* ----------------------------- Vector commands ---------------------------- */
+
+    // ? CVecLen
+    auto CVecLen = std::make_unique<Commands::CoGeo::Vectors::CVecLen>();
+    vectors->AddCommand(std::move(CVecLen));
+    //
+    //
+    //
+
+    cogeo->LinkChild(std::move(vectors));
+
+    Core::REGISTER_TOP_LEVEL(std::move(cogeo));
+
+    // ? END
 
     auto dur = clock.END();
+
     Logger.Log(
         std::format("Done! Building pages and commands took approximately "
                     "{:.4f}ms! Starting in a second...",

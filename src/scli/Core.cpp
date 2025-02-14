@@ -33,6 +33,7 @@
 #include <windows.h>
 
 #include <cassert>
+#include <cstring>
 #include <format>
 #include <stack>
 #include <string>
@@ -45,10 +46,14 @@
 Page* LAST_PAGE = nullptr;
 Page* CURRENT_PAGE = nullptr;
 
-vec<sptr<Page>> TOP_LEVEL_PAGES;
+vec<uptr<Page>> TOP_LEVEL_PAGES;
 std::unordered_map<int, Page*>
     CurrentlyListedPages;  // Which pages are being displayed right now, by
                            // index?
+
+std::unordered_map<int, Command*> CurrentlyListedCommands;
+
+bool IS_COMMAND_MODE = false;
 
 // CLI things
 const str VERSION = "INDEV";
@@ -86,20 +91,79 @@ void firstLoopSetup() {
 
 // Basically logs to the console telling the user how they can use the app.
 void logControlNotice() {
-    Logger.Out(SStyle::Quick::note +
-               "To select a page / command, type the index of the page, which "
-               "is shown in the [] brackets before the page name." +
-               SStyle::reset);
-    // Drastic situations call for drastic measures...
-    Logger.Out(std::format(
-        "{}To exit the application, type {}{}\"{}\"{}{} or {}{}\"{}\"{}.{} To "
-        "return to the root directory, type {}{}\"{}\"{}{} or "
-        "{}{}\"{}\"{}{}.{}\n\n",
-        SStyle::Quick::note, SStyle::reset, SStyle::white, "exit",
-        SStyle::reset, SStyle::Quick::note, SStyle::reset, SStyle::white, "e",
-        SStyle::reset, SStyle::Quick::note, SStyle::reset, SStyle::white,
-        "root", SStyle::reset, SStyle::Quick::note, SStyle::reset,
-        SStyle::white, "r", SStyle::reset, SStyle::Quick::note, SStyle::reset));
+    if (IS_COMMAND_MODE) {
+        Logger.Out(SStyle::Quick::note +
+                   "To select a command, type the index of the page, which "
+                   "is shown in the [] brackets before the page name." +
+                   SStyle::reset);
+        Logger.Out(
+            std::format("{}To exit the command loop, type {}{}\"{}\"{}{} or "
+                        "{}{}\"{}\"{}.\n\n",
+                        SStyle::Quick::note, SStyle::reset, SStyle::white,
+                        "exit", SStyle::reset, SStyle::Quick::note,
+                        SStyle::reset, SStyle::white, "e", SStyle::reset));
+    } else {
+        Logger.Out(SStyle::Quick::note +
+                   "To select a page, type the index of the page, which "
+                   "is shown in the [] brackets before the page name." +
+                   SStyle::reset);
+        // Drastic situations call for drastic measures...
+        Logger.Out(std::format(
+            "{}To exit the application, type {}{}\"{}\"{}{} or {}{}\"{}\"{}.{} "
+            "To "
+            "return to the root directory, type {}{}\"{}\"{}{} or "
+            "{}{}\"{}\"{}{}.{}\n\n",
+            SStyle::Quick::note, SStyle::reset, SStyle::white, "exit",
+            SStyle::reset, SStyle::Quick::note, SStyle::reset, SStyle::white,
+            "e", SStyle::reset, SStyle::Quick::note, SStyle::reset,
+            SStyle::white, "root", SStyle::reset, SStyle::Quick::note,
+            SStyle::reset, SStyle::white, "r", SStyle::reset,
+            SStyle::Quick::note, SStyle::reset));
+    }
+}
+
+// ? Tries to get an input that is not just a newline...
+str getValidInput() {
+    str inp = Logger.In();
+    if (strlen(inp.c_str()) == 0) {
+        inp = getValidInput();
+    }
+    return inp;
+}
+
+std::pair<bool, int> GetSelectedOption(str& inp) {
+    std::pair<bool, int> res = Utils::TryConvertStrToInt(inp);
+    int inputtedIdx = res.second;
+
+    // ? Is the input even convertable into a number?
+    if (!res.first) {
+        Logger.Log(
+            "Failed to convert your input into a number! Are you sure you "
+            "typed it correctly?",
+            LogLevel::WARN);
+        Logger.In();
+        return std::pair<bool, int>(false, 0);
+    }
+
+    // ? Is the inputted index not resolving to an actual page that is being displayed?
+    if (IS_COMMAND_MODE) {
+        if (CurrentlyListedCommands.find(inputtedIdx) ==
+            CurrentlyListedCommands.end()) {
+            Logger.Log("There is no command option with this index!",
+                       LogLevel::WARN);
+            Logger.In();
+            return std::pair<bool, int>(false, 0);
+        }
+    } else {
+        if (CurrentlyListedPages.find(inputtedIdx) ==
+            CurrentlyListedPages.end()) {
+            Logger.Log("There is no page with this index!", LogLevel::WARN);
+            Logger.In();
+            return std::pair<bool, int>(false, 0);
+        }
+    }
+
+    return std::pair<bool, int>(true, inputtedIdx);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -126,34 +190,52 @@ void Core::MAIN(bool isFirstLoop) {
 
     // If this is not the first loop (root dir) then display all the child pages
     // of the current page
+
     if (!isFirstLoop) {
-        DISPLAY_PAGE(*CURRENT_PAGE);
+        IS_COMMAND_MODE = CURRENT_PAGE->isCommandPage();
+        if (IS_COMMAND_MODE) {
+            DISPLAY_CMDS(*CURRENT_PAGE);
+        } else {
+            DISPLAY_PAGE(*CURRENT_PAGE);
+        }
     }
 
     /* ------------------------ Get the input here ------------------------ */
-    str inp = Logger.In();
 
-    //* Check for which page we selected and if it is even valid
-    std::pair<bool, int> res = Utils::TryConvertStrToInt(inp);
-    int inputtedIdx = res.second;
+    str inp;
 
-    // ? Is the input even convertable into a number?
-    if (!res.first) {
-        Logger.Log(
-            "Failed to convert your input into a number! Are you sure you "
-            "typed it correctly?",
-            LogLevel::WARN);
-        Logger.In();
+    // ? Is the input empty? (ie: enter pressed) just rerun the loop
+    inp = getValidInput();
+
+    // TODO: Do internal commands handler, this will be a handler that handles
+    // things like the exit and back command, etc
+    if (inp == "e" || inp == "exit") {
+        return;
+    }
+    // TODO: Use a std::stack for page navigation...
+    // if (inp == "b" || inp == "back") {
+    //     if (LAST_PAGE == nullptr) {
+    //         Logger.Log("Can't backtrack.", LogLevel::WARN);
+    //         MAIN(isFirstLoop);
+    //     }
+    //     layer.pop();
+    //     IS_COMMAND_MODE = false;
+    //     CURRENT_PAGE = LAST_PAGE;
+    //     MAIN(isFirstLoop);
+    // }
+
+    // ? Check for the validity of the input, ie: Is there a page like this? Is it a number? etc
+    std::pair<bool, int> result = GetSelectedOption(inp);
+    if (!result.first) {
         MAIN(isFirstLoop);
         return;
     }
 
-    // ? Is the inputted index not resolving to an actual page that is being
-    // displayed?
-    if (CurrentlyListedPages.find(inputtedIdx) == CurrentlyListedPages.end()) {
-        Logger.Log("There is no page with this index!", LogLevel::WARN);
-        Logger.In();
-        MAIN(isFirstLoop);
+    int inputtedIdx = result.second;
+
+    if (IS_COMMAND_MODE) {
+        CMD_LOOP(inputtedIdx);
+        MAIN(false);
         return;
     }
 
@@ -162,16 +244,47 @@ void Core::MAIN(bool isFirstLoop) {
     // ? Entering the page
     layer.push(CurrentlyListedPages[inputtedIdx]->getName());
     // Listed pages val gets cleared when the function is reinvoked..!
-
+    LAST_PAGE = CURRENT_PAGE;
     CURRENT_PAGE = CurrentlyListedPages[inputtedIdx];
-    if (inp != "e" &&
-        inp != "exit") {  // just for testing, delete later and rework
-        MAIN(false);
-        return;
-    }
+
+    MAIN(false);
 }
 
-void Core::PROCESS_CMD(str cmdInputString) {}
+void Core::CMD_LOOP(int cmdIdx) {
+    Logger.Out("Should be executing the command now?");
+    str inp = Logger.In();
+
+    if (inp == "e" || inp == "exit") {
+        //IS_COMMAND_MODE = false;
+        return;
+    }
+    CMD_LOOP(cmdIdx);
+}
+
+void Core::DISPLAY_CMDS(const Page& pPage) {
+    // Control notice bla bla
+    Logger.Out(std::format("{}Displaying commands of the \"{}\" page.{}",
+                           SStyle::green, CURRENT_PAGE->getName(),
+                           SStyle::reset));
+
+    logControlNotice();
+
+    u8 cmdIdx = 0;
+    if (IS_COMMAND_MODE) {
+        for (auto& pCommand : CURRENT_PAGE->getChildCommands()) {
+            //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
+            Logger.Out(std::format(
+                "{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold, cmdIdx,
+                pCommand->GetName(), SStyle::reset, SStyle::Quick::note,
+                pCommand->GetDesc(), SStyle::reset));
+
+            CurrentlyListedCommands[cmdIdx] = pCommand.get();
+            cmdIdx++;
+        }
+        return;
+    }
+    Logger.Out("\n\n");
+}
 
 void Core::DISPLAY_PAGE(const Page& pPage) {
     Logger.Out(std::format("{}Displaying sub-pages of \"{}\"{}", SStyle::green,
@@ -179,18 +292,21 @@ void Core::DISPLAY_PAGE(const Page& pPage) {
 
     logControlNotice();
 
-    u8 idx = 1;
-    for (auto& pPage : CURRENT_PAGE->getChildPages()) {
-        //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
-        Logger.Out(
-            std::format("{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold,
-                        idx, pPage->getName(), SStyle::reset,
-                        SStyle::Quick::note, pPage->getDesc(), SStyle::reset));
-        CurrentlyListedPages[idx] =
-            pPage.get();  // Get raw pointer to the page... I hope no pointer
-                          // fuckeries will happen in the future lol
-        idx++;
+    u8 pageIdx = 1;
+    for (auto& loopedPage : CURRENT_PAGE->getChildPages()) {
+        //<WhiteBold> [pageIdx] Name <reset> --> <GrayItalic> description <reset>
+        Logger.Out(std::format(
+            "{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold, pageIdx,
+            loopedPage->getName(), SStyle::reset, SStyle::Quick::note,
+            loopedPage->getDesc(), SStyle::reset));
+
+        CurrentlyListedPages[pageIdx] =
+            loopedPage
+                .get();  // Get raw pointer to the page... I hope no pointer
+                         // fuckeries will happen in the future lol
+        pageIdx++;
     }
+    Logger.Out("\n\n");
 }
 
 void Core::DISPLAY_PAGE() {
@@ -211,7 +327,7 @@ void Core::DISPLAY_PAGE() {
     Logger.Out("\n");
 }
 
-void Core::REGISTER_TOP_LEVEL(sptr<Page>& pPage) {
+void Core::REGISTER_TOP_LEVEL(uptr<Page>&& pPage) {
     TOP_LEVEL_PAGES.push_back(std::move(pPage));
 }
 
