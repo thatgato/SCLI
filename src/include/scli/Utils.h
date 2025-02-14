@@ -90,6 +90,7 @@ class Utils {
     Utils() = delete;
 
     static str GetPageStackDirectory(std::stack<str> stack);
+    //static void DisplayDetailedCommandData(Command& cmd);
     // Tries to convert the provided string into an integer. Returns (true, int)
     // if it succeeded, otherwise (false, 0)
     static std::pair<bool, int> TryConvertStrToInt(const str& convert);

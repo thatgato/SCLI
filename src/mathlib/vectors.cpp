@@ -15,3 +15,16 @@
  */
 
 #include "mathlib/vectors.h"
+
+#include <cmath>
+
+
+vec<float>& NVector::GetCoords() { return m_coords; }
+
+float NVector::Length() {
+    float sum = 0;
+    for (float coord : m_coords) {
+        sum += pow(coord, 2);
+    }
+    return sqrtf(sum);
+}

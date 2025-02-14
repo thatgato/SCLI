@@ -138,6 +138,15 @@ std::pair<bool, int> Utils::TryConvertStrToInt(const str& convert) {
     return std::pair<bool, int>(success, conv);
 }
 
+// void Utils::DisplayDetailedCommandData(Command& cmd) {
+//     ULOGGER.Out(SStyle::Quick::note +
+//                 std::format("Command: {}\n", cmd.GetName()));
+//     ULOGGER.Out(SStyle::Quick::note +
+//                 "Current page directory:" + SStyle::reset);
+//     ULOGGER.Out(SStyle::Quick::note + Utils::GetPageStackDirectory(layer) +
+//                 SStyle::reset + "\n");
+// }
+
 /* -------------------------------------------------------------------------- */
 /*                                Utils::Clock                                */
 /* -------------------------------------------------------------------------- */

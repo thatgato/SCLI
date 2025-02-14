@@ -9,6 +9,7 @@ add_executable(scli_main main.cpp)
 target_link_libraries(scli_main PRIVATE CORE_CLASSES)
 target_link_libraries(scli_main PRIVATE SCLI)
 target_link_libraries(scli_main PRIVATE COMMANDS)
+target_link_libraries(scli_main PRIVATE MATHLIB)
 
 target_include_directories(scli_main PRIVATE "${PROJECT_SOURCE_DIR}/src/include")
 target_include_directories(scli_main PRIVATE "${PROJECT_SOURCE_DIR}/vendor")

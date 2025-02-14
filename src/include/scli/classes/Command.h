@@ -30,6 +30,6 @@ class Command {
     virtual ~Command() = default;
     virtual ECommandResult Run() = 0;
 
-    str GetName();
-    str GetDesc();
+    const str GetName();
+    const str GetDesc();
 };

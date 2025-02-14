@@ -251,9 +251,10 @@ void Core::MAIN(bool isFirstLoop) {
 }
 
 void Core::CMD_LOOP(int cmdIdx) {
-    Logger.Out("Should be executing the command now?");
-    str inp = Logger.In();
+    Logger.Out("Should be executing the command now?\n\n");
 
+    CurrentlyListedCommands[cmdIdx]->Run();
+    str inp = Logger.In();
     if (inp == "e" || inp == "exit") {
         //IS_COMMAND_MODE = false;
         return;

@@ -15,3 +15,21 @@
  */
 
 #pragma once
+
+#include "types/general.h"
+class NVector {
+   private:
+    vec<float> m_coords;
+
+   public:
+    NVector(vec<float>& coords) : m_coords(coords) {}
+
+    vec<float>& GetCoords();
+
+    // Math
+    float Length();
+};
+
+namespace VMath {
+float GetVecLen(const NVector& vec);
+}

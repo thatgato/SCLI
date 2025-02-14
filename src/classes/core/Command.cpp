@@ -18,5 +18,5 @@
 Command::Command(const str& cName, const str& cDesc, const str& cHelpDesc)
     : name(cName), desc(cDesc), help_desc(cHelpDesc) {}
 
-str Command::GetDesc() { return desc; }
-str Command::GetName() { return name; }
+const str Command::GetDesc() { return desc; }
+const str Command::GetName() { return name; }
