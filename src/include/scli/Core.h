@@ -28,7 +28,7 @@ namespace Core {
 void MAIN(bool isFirstLoop);  // Main loop !! keep track of running main loops
                               // if someone calls it twice...
 
-void CMD_LOOP(int cmdIdx);
+void EXEC_CMD(int cmdIdx);
 void DISPLAY_PAGE();
 void DISPLAY_PAGE(const Page& pPage);
 void DISPLAY_CMDS(const Page& pPage);

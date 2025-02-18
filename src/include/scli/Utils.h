@@ -16,6 +16,7 @@
  */
 
 #pragma once
+#include "scli/classes/Command.h"
 #undef ERROR  // Weird wingdi.h shit? This conflicts with LogLevel::ERROR :3
 #include <stack>
 
@@ -94,6 +95,21 @@ class Utils {
     // Tries to convert the provided string into an integer. Returns (true, int)
     // if it succeeded, otherwise (false, 0)
     static std::pair<bool, int> TryConvertStrToInt(const str& convert);
+    static std::pair<bool, double> TryConvertStrToDouble(const str& convert);
+    static vec<str> SplitStrByDelimiter(str inp, char delim);
+    static void DisplayCmdDataOnRun(const Command& cmd);
+
+    template <typename T>
+    static str RemoveTrailingZeroesFromNum(T source) {
+        std::string formatted = std::format("{:.4f}", source);
+
+        formatted.erase(formatted.find_last_not_of('0') + 1, std::string::npos);
+        if (formatted.back() == '.') {
+            formatted.pop_back();
+        }
+
+        return formatted;
+    };
 };
 
 // Utils specific type definitions, for easier typing

@@ -28,8 +28,9 @@ class Command {
     Command(const str& cName, const str& cDesc, const str& cHelpDesc);
 
     virtual ~Command() = default;
-    virtual ECommandResult Run() = 0;
+    virtual ECommandResult Run(bool isFirst) = 0;
 
-    const str GetName();
-    const str GetDesc();
+    str GetName() const;
+    str GetDesc() const;
+    str GetHelpDesc() const;
 };

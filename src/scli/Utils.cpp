@@ -24,6 +24,7 @@
 #include <string>
 #include <utility>
 
+#include "scli/classes/Command.h"
 #include "types/general.h"
 
 /* -------------------------------------------------------------------------- */
@@ -136,6 +137,39 @@ std::pair<bool, int> Utils::TryConvertStrToInt(const str& convert) {
         ULOGGER.Log(e.what(), Logger::LogLevel::DEBUG_WARN);
     }
     return std::pair<bool, int>(success, conv);
+}
+std::pair<bool, double> Utils::TryConvertStrToDouble(const str& convert) {
+    bool success = false;
+    double conv = 0;
+    try {
+        conv = std::stod(convert);
+        success = true;
+    } catch (std::exception& e) {
+        ULOGGER.Log(e.what(), Logger::LogLevel::DEBUG_WARN);
+    }
+    return std::pair<bool, double>(success, conv);
+}
+
+vec<str> Utils::SplitStrByDelimiter(str inp, char delim) {
+    std::vector<std::string> result;
+    std::istringstream sstream(inp);
+    std::string token;
+
+    while (std::getline(sstream, token, delim)) {
+        result.push_back(token);
+    }
+
+    return result;
+}
+
+void Utils::DisplayCmdDataOnRun(const Command& cmd) {
+    ULOGGER.Out(std::format(
+        "{}Command: {}{}{}{}\n\n{}Command description: {}{}{}{}\n\n{}To "
+        "exit the command context, type {}{}\"!e\"{}\n\n",
+        SStyle::white, SStyle::reset, SStyle::orange, cmd.GetName(),
+        SStyle::reset, SStyle::white, SStyle::reset, SStyle::Quick::note,
+        cmd.GetHelpDesc(), SStyle::reset, SStyle::Quick::note, SStyle::reset,
+        SStyle::white, SStyle::reset));
 }
 
 // void Utils::DisplayDetailedCommandData(Command& cmd) {

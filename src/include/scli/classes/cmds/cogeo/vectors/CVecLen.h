@@ -22,6 +22,6 @@ namespace Commands::CoGeo::Vectors {
 class CVecLen : public Command {
    public:
     CVecLen();
-    ECommandResult Run();
+    ECommandResult Run(bool isFirst) override;
 };
 };  // namespace Commands::CoGeo::Vectors

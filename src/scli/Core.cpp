@@ -234,7 +234,7 @@ void Core::MAIN(bool isFirstLoop) {
     int inputtedIdx = result.second;
 
     if (IS_COMMAND_MODE) {
-        CMD_LOOP(inputtedIdx);
+        EXEC_CMD(inputtedIdx);
         MAIN(false);
         return;
     }
@@ -250,16 +250,10 @@ void Core::MAIN(bool isFirstLoop) {
     MAIN(false);
 }
 
-void Core::CMD_LOOP(int cmdIdx) {
+void Core::EXEC_CMD(int cmdIdx) {
     Logger.Out("Should be executing the command now?\n\n");
 
-    CurrentlyListedCommands[cmdIdx]->Run();
-    str inp = Logger.In();
-    if (inp == "e" || inp == "exit") {
-        //IS_COMMAND_MODE = false;
-        return;
-    }
-    CMD_LOOP(cmdIdx);
+    CurrentlyListedCommands[cmdIdx]->Run(true);
 }
 
 void Core::DISPLAY_CMDS(const Page& pPage) {

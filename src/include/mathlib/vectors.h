@@ -17,19 +17,24 @@
 #pragma once
 
 #include "types/general.h"
+
+template <typename T>
+
 class NVector {
    private:
-    vec<float> m_coords;
+    vec<T> m_coords;
 
    public:
-    NVector(vec<float>& coords) : m_coords(coords) {}
+    NVector(vec<T>& coords) : m_coords(coords) {}
 
-    vec<float>& GetCoords();
+    vec<T>& GetCoords() { return m_coords; }
 
     // Math
-    float Length();
+    T Length() {
+        T sum = 0;
+        for (T coord : m_coords) {
+            sum += pow(coord, 2);
+        }
+        return sqrtf(sum);
+    };
 };
-
-namespace VMath {
-float GetVecLen(const NVector& vec);
-}
