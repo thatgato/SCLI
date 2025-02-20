@@ -17,6 +17,7 @@
 
 #pragma once
 #include "scli/classes/Command.h"
+#include "scli/classes/Page.h"
 #undef ERROR  // Weird wingdi.h shit? This conflicts with LogLevel::ERROR :3
 #include <stack>
 
@@ -90,7 +91,7 @@ class Utils {
 
     Utils() = delete;
 
-    static str GetPageStackDirectory(std::stack<str> stack);
+    static str GetPageDequeStr(std::deque<Page*> deq);
     //static void DisplayDetailedCommandData(Command& cmd);
     // Tries to convert the provided string into an integer. Returns (true, int)
     // if it succeeded, otherwise (false, 0)

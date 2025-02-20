@@ -35,16 +35,17 @@
 #include <cassert>
 #include <cstring>
 #include <format>
-#include <stack>
+#include <functional>
 #include <string>
 #include <unordered_map>
 
 #include "scli/Utils.h"
+#include "scli/classes/Command.h"
+#include "scli/classes/Page.h"
 #include "types/general.h"
 
 // Pages
-Page* LAST_PAGE = nullptr;
-Page* CURRENT_PAGE = nullptr;
+std::deque<Page*> PAGE_DEQUE;
 
 vec<uptr<Page>> TOP_LEVEL_PAGES;
 std::unordered_map<int, Page*>
@@ -62,7 +63,7 @@ std::unordered_map<str, bool> FLAGS;
 
 // Basically the value storing the names of the loaded pages in a LIFO manner;
 // used for displaying the current page path
-std::stack<str> layer;
+//std::stack<str> layer;
 
 static Utils::Logger Logger("Core");
 
@@ -75,7 +76,7 @@ void displayTopInfo() {
     Logger.Out(SStyle::Quick::note +
                std::format("SCLI Version {}{}\n", VERSION, SStyle::reset));
     Logger.Out(SStyle::Quick::note + "Current page directory:" + SStyle::reset);
-    Logger.Out(SStyle::Quick::note + Utils::GetPageStackDirectory(layer) +
+    Logger.Out(SStyle::Quick::note + Utils::GetPageDequeStr(PAGE_DEQUE) +
                SStyle::reset + "\n");
 }
 
@@ -166,6 +167,30 @@ std::pair<bool, int> GetSelectedOption(str& inp) {
     return std::pair<bool, int>(true, inputtedIdx);
 }
 
+// ? Internal commands
+
+enum EPostCmdAction { CONTINUE, HALT };
+
+EPostCmdAction Exit() { return HALT; }
+
+EPostCmdAction Back() {
+    if (PAGE_DEQUE.size() >= 1) {
+        PAGE_DEQUE.pop_back();
+        return CONTINUE;
+    } else
+        return HALT;
+}
+
+std::unordered_map<str, std::function<EPostCmdAction()>> CmdFuncMap;
+
+EPostCmdAction HandleInternalCommands(const str& inp) {
+    EPostCmdAction ret = HALT;
+    if (CmdFuncMap.contains(inp)) {
+        ret = CmdFuncMap[inp]();
+    }
+    return ret;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                      Core functions exposed through .h                     */
 /* -------------------------------------------------------------------------- */
@@ -175,10 +200,14 @@ void Core::MAIN(bool isFirstLoop) {
     CurrentlyListedPages.clear();
 
     if (isFirstLoop) {
-        std::stack<str> emptyStack;
-        layer.swap(emptyStack);
-        layer.push("root");  // This is needed so we can display the root
-                             // directory before displaying the top level pages
+        // ? Set the internal commands up
+        CmdFuncMap["e"] = Exit;
+        CmdFuncMap["exit"] = Exit;
+        CmdFuncMap["b"] = Back;
+        CmdFuncMap["back"] = Back;
+
+        std::deque<Page*> emptyDeq;  // todo: fix shit
+        PAGE_DEQUE.swap(emptyDeq);
     }
 
     displayTopInfo();
@@ -192,11 +221,11 @@ void Core::MAIN(bool isFirstLoop) {
     // of the current page
 
     if (!isFirstLoop) {
-        IS_COMMAND_MODE = CURRENT_PAGE->isCommandPage();
+        IS_COMMAND_MODE = PAGE_DEQUE.back()->isCommandPage();
         if (IS_COMMAND_MODE) {
-            DISPLAY_CMDS(*CURRENT_PAGE);
+            DISPLAY_CMDS(*PAGE_DEQUE.back());
         } else {
-            DISPLAY_PAGE(*CURRENT_PAGE);
+            DISPLAY_PAGE(*PAGE_DEQUE.back());
         }
     }
 
@@ -209,9 +238,11 @@ void Core::MAIN(bool isFirstLoop) {
 
     // TODO: Do internal commands handler, this will be a handler that handles
     // things like the exit and back command, etc
-    if (inp == "e" || inp == "exit") {
-        return;
-    }
+    // if (inp == "e" || inp == "exit") {
+    //     return;
+    // }
+
+    HandleInternalCommands(inp);
     // TODO: Use a std::stack for page navigation...
     // if (inp == "b" || inp == "back") {
     //     if (LAST_PAGE == nullptr) {
@@ -242,10 +273,8 @@ void Core::MAIN(bool isFirstLoop) {
     Logger.Out("All checks passed, should enter page now!!!!");
 
     // ? Entering the page
-    layer.push(CurrentlyListedPages[inputtedIdx]->getName());
     // Listed pages val gets cleared when the function is reinvoked..!
-    LAST_PAGE = CURRENT_PAGE;
-    CURRENT_PAGE = CurrentlyListedPages[inputtedIdx];
+    PAGE_DEQUE.push_back(CurrentlyListedPages[inputtedIdx]);
 
     MAIN(false);
 }
@@ -259,14 +288,14 @@ void Core::EXEC_CMD(int cmdIdx) {
 void Core::DISPLAY_CMDS(const Page& pPage) {
     // Control notice bla bla
     Logger.Out(std::format("{}Displaying commands of the \"{}\" page.{}",
-                           SStyle::green, CURRENT_PAGE->getName(),
+                           SStyle::green, PAGE_DEQUE.back()->getName(),
                            SStyle::reset));
 
     logControlNotice();
 
     u8 cmdIdx = 0;
     if (IS_COMMAND_MODE) {
-        for (auto& pCommand : CURRENT_PAGE->getChildCommands()) {
+        for (auto& pCommand : PAGE_DEQUE.back()->getChildCommands()) {
             //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
             Logger.Out(std::format(
                 "{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold, cmdIdx,
@@ -283,12 +312,12 @@ void Core::DISPLAY_CMDS(const Page& pPage) {
 
 void Core::DISPLAY_PAGE(const Page& pPage) {
     Logger.Out(std::format("{}Displaying sub-pages of \"{}\"{}", SStyle::green,
-                           CURRENT_PAGE->getName(), SStyle::reset));
+                           PAGE_DEQUE.back()->getName(), SStyle::reset));
 
     logControlNotice();
 
     u8 pageIdx = 1;
-    for (auto& loopedPage : CURRENT_PAGE->getChildPages()) {
+    for (auto& loopedPage : PAGE_DEQUE.back()->getChildPages()) {
         //<WhiteBold> [pageIdx] Name <reset> --> <GrayItalic> description <reset>
         Logger.Out(std::format(
             "{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold, pageIdx,
@@ -331,7 +360,7 @@ void SET_FLAG(const str& flagName, bool val) {
     FLAGS[flagName] = val;
 }
 
-Page* Core::GET_CURRENT_PAGE() { return CURRENT_PAGE; }
-Page* Core::GET_LAST_PAGE() { return LAST_PAGE; }
+Page* Core::GET_CURRENT_PAGE() { return PAGE_DEQUE.back(); }
+Page* Core::GET_LAST_PAGE() { return PAGE_DEQUE[PAGE_DEQUE.size() - 2]; }
 str Core::GET_VERSION() { return VERSION; }
 bool Core::GET_FLAG(str flagName) { return FLAGS.at(flagName); }

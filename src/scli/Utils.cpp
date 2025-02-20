@@ -103,28 +103,18 @@ Utils::Logger ULOGGER("Utils");
 /*                                    Other                                   */
 /* -------------------------------------------------------------------------- */
 
-str Utils::GetPageStackDirectory(std::stack<str> stack) {
-    std::stack<str> temp;
-    while (!stack.empty()) {
-        temp.push(stack.top());
-        stack.pop();
-    }
-
-    str path = SStyle::Quick::note;  // Start off with this style
-    while (!temp.empty()) {
-        if (temp.size() == 1)
-            path += SStyle::reset + SStyle::white + SStyle::italic;
-
-        path += temp.top();
-        temp.pop();
-
-        if (!temp.empty()) {
-            path += "/";
+str Utils::GetPageDequeStr(std::deque<Page*> deq) {
+    std::string result = "root";
+    for (size_t i = 0; i < deq.size(); ++i) {
+        result += deq[i]->getName();
+        if (i != deq.size() - 1) {
+            result += "/";
         }
     }
-    path += SStyle::reset;  // Reset the style so we don't fuck up other things
-                            // being printed after this
-    return path;
+    result +=
+        SStyle::reset;  // Reset the style so we don't fuck up other things
+                        // being printed after this
+    return result;
 }
 
 std::pair<bool, int> Utils::TryConvertStrToInt(const str& convert) {
