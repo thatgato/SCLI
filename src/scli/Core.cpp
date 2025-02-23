@@ -47,7 +47,6 @@
 // Pages
 std::deque<Page*> PAGE_DEQUE;
 
-vec<uptr<Page>> TOP_LEVEL_PAGES;
 std::unordered_map<int, Page*>
     CurrentlyListedPages;  // Which pages are being displayed right now, by
                            // index?
@@ -206,8 +205,15 @@ void Core::MAIN(bool isFirstLoop) {
         CmdFuncMap["b"] = Back;
         CmdFuncMap["back"] = Back;
 
-        std::deque<Page*> emptyDeq;  // todo: fix shit
-        PAGE_DEQUE.swap(emptyDeq);
+        // todo: ok so the first page should always stay, thats the root page
+        // todo: idk how to handle that exactly but yeah, cant think of it now, im out of time
+        // todo: Probably handle the "unable to backtrack" on the back command with checking if the page_deque is empty? and keep the TOP_LEVEL_PAGES variable? idk pls experiment with it, dear future me
+        // if (!PAGE_DEQUE.empty())
+        //     PAGE_DEQUE
+        //         .pop_front();  // delete root, so that the root page pointer is deleted when clearing the deque
+        // std::deque<Page*> emptyDeq;  // todo: fix shit
+        // PAGE_DEQUE.swap(emptyDeq);
+        // PAGE_DEQUE.push_back(new Page("root", "root"));
     }
 
     displayTopInfo();
@@ -338,7 +344,7 @@ void Core::DISPLAY_PAGE() {
     logControlNotice();
 
     u8 idx = 1;
-    for (auto& pPage : TOP_LEVEL_PAGES) {
+    for (auto& pPage : PAGE_DEQUE.front()->getChildPages()) {
         //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
         Logger.Out(
             std::format("{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold,
@@ -352,7 +358,12 @@ void Core::DISPLAY_PAGE() {
 }
 
 void Core::REGISTER_TOP_LEVEL(uptr<Page>&& pPage) {
-    TOP_LEVEL_PAGES.push_back(std::move(pPage));
+    if (PAGE_DEQUE.empty()) {
+        Logger.Log("Page Deque is empty!",
+                   LogLevel::DEBUG_WARN);  // shouldnt happen (?)
+        PAGE_DEQUE.push_back(new Page("root", "root"));
+    }
+    PAGE_DEQUE.front()->LinkChild(std::move(pPage));
 }
 
 void SET_FLAG(const str& flagName, bool val) {
