@@ -190,10 +190,13 @@ std::unordered_map<str, std::function<EPostCmdAction()>> CmdFuncMap;
 /* -------------------------------------------------------------------------- */
 
 EPostCmdAction Core::GET_INTERNAL_CMD_RESULT(const str& cmd) {
+    Logger.Out("-- Eval internal cmd for '" + cmd + "' --");
     EPostCmdAction ret = CONTINUE;
     if (CmdFuncMap.contains(cmd)) {
         ret = CmdFuncMap[cmd]();
     }
+    Logger.Out("-- Contains internal cmd? '" +
+               std::to_string(CmdFuncMap.contains(cmd)) + "' --");
     return ret;
 }
 
@@ -259,9 +262,11 @@ void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
             break;
         case RERUN:
             Core::MAIN(isFirstLoop);
+            return;
             break;
         case RERUN_FIRST_LOOP:
             Core::MAIN(true);
+            return;
             break;
         case EXIT:
             shouldExit = true;  // lol
@@ -271,6 +276,7 @@ void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
     }
 
     if (shouldExit) {
+        Logger.Out("SHOULD EXIT!!");
         return;
     }
 
