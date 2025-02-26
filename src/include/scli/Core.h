@@ -25,8 +25,10 @@
 /* -------------------------------------------------------------------------- */
 namespace Core {
 
-void MAIN(bool isFirstLoop);  // Main loop !! keep track of running main loops
-                              // if someone calls it twice...
+void MAIN(
+    bool isFirstLoop,
+    str carryOverMsg = "");  // Main loop !! keep track of running main loops
+                             // if someone calls it twice...
 
 void EXEC_CMD(int cmdIdx);
 void DISPLAY_PAGE();

@@ -210,3 +210,5 @@ str Utils::StrStyle::reset = "\033[00m";
 
 str Utils::StrStyle::Quick::note =
     Utils::StrStyle::italic + Utils::StrStyle::gray;
+str Utils::StrStyle::Quick::warn =
+    Utils::StrStyle::orange + Utils::StrStyle::bold + Utils::StrStyle::italic;

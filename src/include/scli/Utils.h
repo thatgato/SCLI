@@ -16,10 +16,12 @@
  */
 
 #pragma once
+#include <deque>
+
 #include "scli/classes/Command.h"
 #include "scli/classes/Page.h"
+
 #undef ERROR  // Weird wingdi.h shit? This conflicts with LogLevel::ERROR :3
-#include <stack>
 
 #include "types/chrono.h"
 #include "types/general.h"
@@ -86,6 +88,7 @@ class Utils {
         class Quick {
            public:
             static str note;
+            static str warn;
         };
     };
 

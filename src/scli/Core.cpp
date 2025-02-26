@@ -45,6 +45,7 @@
 #include "types/general.h"
 
 // Pages
+std::vector<uptr<Page>> TOP_LEVEL_PAGES;
 std::deque<Page*> PAGE_DEQUE;
 
 std::unordered_map<int, Page*>
@@ -60,10 +61,6 @@ const str VERSION = "INDEV";
 
 std::unordered_map<str, bool> FLAGS;
 
-// Basically the value storing the names of the loaded pages in a LIFO manner;
-// used for displaying the current page path
-//std::stack<str> layer;
-
 static Utils::Logger Logger("Core");
 
 /* -------------------------------------------------------------------------- */
@@ -71,12 +68,16 @@ static Utils::Logger Logger("Core");
 /* -------------------------------------------------------------------------- */
 
 // Displays the current directory, the info about the current page, etc.
-void displayTopInfo() {
+void displayTopInfo(str carriedOverMsg = "") {
     Logger.Out(SStyle::Quick::note +
                std::format("SCLI Version {}{}\n", VERSION, SStyle::reset));
     Logger.Out(SStyle::Quick::note + "Current page directory:" + SStyle::reset);
     Logger.Out(SStyle::Quick::note + Utils::GetPageDequeStr(PAGE_DEQUE) +
                SStyle::reset + "\n");
+
+    if (carriedOverMsg != "") {
+        Logger.Out("Last message: " + carriedOverMsg);
+    }
 }
 
 // Runs the first loop setup, like changing the console window title
@@ -166,24 +167,32 @@ std::pair<bool, int> GetSelectedOption(str& inp) {
     return std::pair<bool, int>(true, inputtedIdx);
 }
 
+bool isRootPageActive() { return PAGE_DEQUE.empty(); }
+
 // ? Internal commands
 
-enum EPostCmdAction { CONTINUE, HALT };
+enum EPostCmdAction {
+    CONTINUE,
+    RERUN,
+    RERUN_FIRST_LOOP,
+    EXIT
+};  // todo currently this serves no purpose, might have to get rid of it later
 
-EPostCmdAction Exit() { return HALT; }
+EPostCmdAction Exit() { return EXIT; }
 
 EPostCmdAction Back() {
     if (PAGE_DEQUE.size() >= 1) {
         PAGE_DEQUE.pop_back();
-        return CONTINUE;
-    } else
-        return HALT;
+        return RERUN;
+    } else {
+        return RERUN;
+    }
 }
 
 std::unordered_map<str, std::function<EPostCmdAction()>> CmdFuncMap;
 
 EPostCmdAction HandleInternalCommands(const str& inp) {
-    EPostCmdAction ret = HALT;
+    EPostCmdAction ret = EXIT;
     if (CmdFuncMap.contains(inp)) {
         ret = CmdFuncMap[inp]();
     }
@@ -194,7 +203,7 @@ EPostCmdAction HandleInternalCommands(const str& inp) {
 /*                      Core functions exposed through .h                     */
 /* -------------------------------------------------------------------------- */
 
-void Core::MAIN(bool isFirstLoop) {
+void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
     system("cls");
     CurrentlyListedPages.clear();
 
@@ -208,12 +217,9 @@ void Core::MAIN(bool isFirstLoop) {
         // todo: ok so the first page should always stay, thats the root page
         // todo: idk how to handle that exactly but yeah, cant think of it now, im out of time
         // todo: Probably handle the "unable to backtrack" on the back command with checking if the page_deque is empty? and keep the TOP_LEVEL_PAGES variable? idk pls experiment with it, dear future me
-        // if (!PAGE_DEQUE.empty())
-        //     PAGE_DEQUE
-        //         .pop_front();  // delete root, so that the root page pointer is deleted when clearing the deque
-        // std::deque<Page*> emptyDeq;  // todo: fix shit
-        // PAGE_DEQUE.swap(emptyDeq);
-        // PAGE_DEQUE.push_back(new Page("root", "root"));
+
+        std::deque<Page*> emptyDeq;
+        PAGE_DEQUE.swap(emptyDeq);
     }
 
     displayTopInfo();
@@ -227,12 +233,19 @@ void Core::MAIN(bool isFirstLoop) {
     // of the current page
 
     if (!isFirstLoop) {
-        IS_COMMAND_MODE = PAGE_DEQUE.back()->isCommandPage();
-        if (IS_COMMAND_MODE) {
-            DISPLAY_CMDS(*PAGE_DEQUE.back());
-        } else {
-            DISPLAY_PAGE(*PAGE_DEQUE.back());
+        if (!isRootPageActive()) {
+            IS_COMMAND_MODE = PAGE_DEQUE.back()->isCommandPage();
+            if (IS_COMMAND_MODE) {
+                DISPLAY_CMDS(*PAGE_DEQUE.back());
+            } else {
+                DISPLAY_PAGE(*PAGE_DEQUE.back());
+            }
         }
+    }
+
+    // Handle the case where we backtrack from a page to the root page
+    if (isRootPageActive() && !isFirstLoop) {
+        Core::DISPLAY_PAGE();
     }
 
     /* ------------------------ Get the input here ------------------------ */
@@ -242,24 +255,26 @@ void Core::MAIN(bool isFirstLoop) {
     // ? Is the input empty? (ie: enter pressed) just rerun the loop
     inp = getValidInput();
 
-    // TODO: Do internal commands handler, this will be a handler that handles
-    // things like the exit and back command, etc
-    // if (inp == "e" || inp == "exit") {
-    //     return;
-    // }
+    EPostCmdAction res = HandleInternalCommands(inp);
 
-    HandleInternalCommands(inp);
-    // TODO: Use a std::stack for page navigation...
-    // if (inp == "b" || inp == "back") {
-    //     if (LAST_PAGE == nullptr) {
-    //         Logger.Log("Can't backtrack.", LogLevel::WARN);
-    //         MAIN(isFirstLoop);
-    //     }
-    //     layer.pop();
-    //     IS_COMMAND_MODE = false;
-    //     CURRENT_PAGE = LAST_PAGE;
-    //     MAIN(isFirstLoop);
-    // }
+    bool shouldExit = false;
+    switch (res) {
+        case CONTINUE:
+            break;
+        case RERUN:
+            Core::MAIN(isFirstLoop);
+            break;
+        case RERUN_FIRST_LOOP:
+            Core::MAIN(true);
+            break;
+        case EXIT:
+            shouldExit = true;  // lol
+            break;
+    }
+
+    if (shouldExit) {
+        return;
+    }
 
     // ? Check for the validity of the input, ie: Is there a page like this? Is it a number? etc
     std::pair<bool, int> result = GetSelectedOption(inp);
@@ -344,7 +359,7 @@ void Core::DISPLAY_PAGE() {
     logControlNotice();
 
     u8 idx = 1;
-    for (auto& pPage : PAGE_DEQUE.front()->getChildPages()) {
+    for (auto& pPage : TOP_LEVEL_PAGES) {
         //<WhiteBold> [idx] Name <reset> --> <GrayItalic> description <reset>
         Logger.Out(
             std::format("{}[{}] {}{} -> {}{}{}", SStyle::white + SStyle::bold,
@@ -358,12 +373,7 @@ void Core::DISPLAY_PAGE() {
 }
 
 void Core::REGISTER_TOP_LEVEL(uptr<Page>&& pPage) {
-    if (PAGE_DEQUE.empty()) {
-        Logger.Log("Page Deque is empty!",
-                   LogLevel::DEBUG_WARN);  // shouldnt happen (?)
-        PAGE_DEQUE.push_back(new Page("root", "root"));
-    }
-    PAGE_DEQUE.front()->LinkChild(std::move(pPage));
+    TOP_LEVEL_PAGES.push_back(std::move(pPage));
 }
 
 void SET_FLAG(const str& flagName, bool val) {
@@ -371,7 +381,12 @@ void SET_FLAG(const str& flagName, bool val) {
     FLAGS[flagName] = val;
 }
 
-Page* Core::GET_CURRENT_PAGE() { return PAGE_DEQUE.back(); }
+Page* Core::GET_CURRENT_PAGE() {
+    if (isRootPageActive()) {
+        return nullptr;
+    }
+    return PAGE_DEQUE.back();
+}
 Page* Core::GET_LAST_PAGE() { return PAGE_DEQUE[PAGE_DEQUE.size() - 2]; }
 str Core::GET_VERSION() { return VERSION; }
 bool Core::GET_FLAG(str flagName) { return FLAGS.at(flagName); }
