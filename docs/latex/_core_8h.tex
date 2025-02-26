@@ -1,0 +1,84 @@
+\doxysection{src/include/scli/\+Core.h File Reference}
+\hypertarget{_core_8h}{}\label{_core_8h}\index{src/include/scli/Core.h@{src/include/scli/Core.h}}
+
+
+SCLI Core Functions.  
+
+
+{\ttfamily \#include "{}classes/core/\+Page.\+h"{}}\newline
+{\ttfamily \#include "{}types/general.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_core_8h_af68133227715cf071ab775e2ff3821e0}{Core\+::\+MAIN}} (bool is\+First\+Loop)
+\item 
+\Hypertarget{_core_8h_abe5dea9f4d94e824621153b04ea4d855}\label{_core_8h_abe5dea9f4d94e824621153b04ea4d855} 
+void {\bfseries Core\+::\+PROCESS\+\_\+\+CMD} (str cmd\+Input\+String)
+\item 
+\Hypertarget{_core_8h_a1ddaa0780dde11ee274c8c75a061d52e}\label{_core_8h_a1ddaa0780dde11ee274c8c75a061d52e} 
+void {\bfseries Core\+::\+DISPLAY\+\_\+\+PAGE} ()
+\item 
+\Hypertarget{_core_8h_aafef31739940b437a8df4ebf93711f12}\label{_core_8h_aafef31739940b437a8df4ebf93711f12} 
+void {\bfseries Core\+::\+DISPLAY\+\_\+\+PAGE} (const sptr$<$ \mbox{\hyperlink{class_page}{Page}} $>$ \&p\+Page)
+\item 
+\Hypertarget{_core_8h_a3d98f43af00c9a8cf3930477098bfdfd}\label{_core_8h_a3d98f43af00c9a8cf3930477098bfdfd} 
+void {\bfseries Core\+::\+SET\+\_\+\+FLAG} (const str \&flag\+Name, bool val)
+\item 
+\Hypertarget{_core_8h_ac552c1f9e9168e6057a821c380604606}\label{_core_8h_ac552c1f9e9168e6057a821c380604606} 
+void {\bfseries Core\+::\+REGISTER\+\_\+\+TOP\+\_\+\+LEVEL} (uptr$<$ \mbox{\hyperlink{class_page}{Page}} $>$ \&p\+Page)
+\item 
+\Hypertarget{_core_8h_a74d2289d2adb9ac649b5ef64fd055c29}\label{_core_8h_a74d2289d2adb9ac649b5ef64fd055c29} 
+sptr$<$ \mbox{\hyperlink{class_page}{Page}} $>$ {\bfseries Core\+::\+GET\+\_\+\+CURRENT\+\_\+\+PAGE} ()
+\item 
+\Hypertarget{_core_8h_ae72bfad010a67b9904dbd701dfae16c6}\label{_core_8h_ae72bfad010a67b9904dbd701dfae16c6} 
+sptr$<$ \mbox{\hyperlink{class_page}{Page}} $>$ {\bfseries Core\+::\+GET\+\_\+\+LAST\+\_\+\+PAGE} ()
+\item 
+\Hypertarget{_core_8h_a648fa0b15a39c1fb9fad9165496b1fe6}\label{_core_8h_a648fa0b15a39c1fb9fad9165496b1fe6} 
+str {\bfseries Core\+::\+GET\+\_\+\+VERSION} ()
+\item 
+\Hypertarget{_core_8h_a1509839f9e94545af5ff853d8f8983ec}\label{_core_8h_a1509839f9e94545af5ff853d8f8983ec} 
+bool {\bfseries Core\+::\+GET\+\_\+\+FLAG} (str flag\+Name)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+SCLI Core Functions. 
+
+\DoxyHorRuler{0}
+
+
+\begin{DoxyAuthor}{Author}
+thatgato 
+\end{DoxyAuthor}
+\hypertarget{_core_8h_autotoc_md22}{}\doxysubsection{\texorpdfstring{autotoc\+\_\+md22}{autotoc\+\_\+md22}}\label{_core_8h_autotoc_md22}
+\begin{DoxyDate}{Date}
+2025-\/02-\/07
+\end{DoxyDate}
+The core functions of SCLI. Things like controlling which page to show, when to flush the CLI, the main loop and registering top level pages all happen here. This is the magical core of SCLI.
+
+\DoxyHorRuler{0}
+
+
+\DoxyHorRuler{0}
+
+
+\begin{DoxyAuthor}{Author}
+thatgato 
+\end{DoxyAuthor}
+\hypertarget{_core_8h_autotoc_md43}{}\doxysubsection{\texorpdfstring{autotoc\+\_\+md43}{autotoc\+\_\+md43}}\label{_core_8h_autotoc_md43}
+\begin{DoxyDate}{Date}
+2025-\/02-\/07
+\end{DoxyDate}
+The core functions of SCLI. Things like controlling which page to show, when to flush the CLI, the main loop and registering top level pages all happen here. This is the magical core of SCLI.
+
+\DoxyHorRuler{0}
+ 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_core_8h_af68133227715cf071ab775e2ff3821e0}\index{Core.h@{Core.h}!MAIN@{MAIN}}
+\index{MAIN@{MAIN}!Core.h@{Core.h}}
+\doxysubsubsection{\texorpdfstring{MAIN()}{MAIN()}}
+{\footnotesize\ttfamily \label{_core_8h_af68133227715cf071ab775e2ff3821e0} 
+void Core\+::\+MAIN (\begin{DoxyParamCaption}\item[{bool}]{is\+First\+Loop}{}\end{DoxyParamCaption})}
+
+FLAGS

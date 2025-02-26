@@ -1,0 +1,33 @@
+\doxysection{Page.\+h}
+\hypertarget{_page_8h_source}{}\label{_page_8h_source}\index{src/include/classes/core/Page.h@{src/include/classes/core/Page.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}classes/core/Command.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{general_8h}{types/general.h}}"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }Page\ \{}
+\DoxyCodeLine{00022\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00023\ \ \ \ \ str\ name;}
+\DoxyCodeLine{00024\ \ \ \ \ str\ desc;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ vec<uptr<Page>>\ child\_pages;}
+\DoxyCodeLine{00027\ \ \ \ \ wptr<Page>\ parent\_page;}
+\DoxyCodeLine{00028\ \ \ \ \ vec<uptr<Command>>\ child\_commands;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \ \ Page(\textcolor{keyword}{const}\ str\&\ pageName,\ \textcolor{keyword}{const}\ str\&\ descStr);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{void}\ LinkChild(Page\&\ cPage);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ LinkParent(Page\&\ pPage);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{void}\ AddCommand(\mbox{\hyperlink{class_command}{Command}}\&\ pCommand);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ str\ getName()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00039\ \ \ \ \ str\ getDesc()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00040\ \};}
+
+\end{DoxyCode}

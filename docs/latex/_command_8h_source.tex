@@ -1,0 +1,28 @@
+\doxysection{Command.\+h}
+\hypertarget{_command_8h_source}{}\label{_command_8h_source}\index{src/include/classes/core/Command.h@{src/include/classes/core/Command.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{general_8h}{types/general.h}}"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{enum}\ ECommandResult\ \{\ SUCCESS,\ FAIL\ \};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }Command\ \{}
+\DoxyCodeLine{00022\ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00023\ \ \ \ \ str\ name;}
+\DoxyCodeLine{00024\ \ \ \ \ str\ desc;}
+\DoxyCodeLine{00025\ \ \ \ \ str\ help\_desc;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \ \ Command(\textcolor{keyword}{const}\ str\&\ cName,\ \textcolor{keyword}{const}\ str\&\ cDesc,\ \textcolor{keyword}{const}\ str\&\ cHelpDesc);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~Command()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{virtual}\ ECommandResult\ Run()\ =\ 0;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ str\ GetName();}
+\DoxyCodeLine{00034\ \ \ \ \ str\ GetDesc();}
+\DoxyCodeLine{00035\ \};}
+
+\end{DoxyCode}
