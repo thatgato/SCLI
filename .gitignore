@@ -1,3 +1,7 @@
+#Doxygen
+docs/
+*.tag
+
 # Directory
 build/
 .vs/
@@ -38,3 +42,4 @@ build/
 *.exe
 *.out
 *.app
+.clang-format

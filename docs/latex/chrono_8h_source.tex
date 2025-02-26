@@ -1,0 +1,18 @@
+\doxysection{chrono.\+h}
+\hypertarget{chrono_8h_source}{}\label{chrono_8h_source}\index{src/include/types/chrono.h@{src/include/types/chrono.h}}
+\mbox{\hyperlink{chrono_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00020\ \textcolor{keyword}{using\ }time\_point\_t\ =\ std::chrono::time\_point<T>;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}\ J>}
+\DoxyCodeLine{00023\ \textcolor{keyword}{using\ }duration\_t\ =\ std::chrono::duration<T,\ J>;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{using\ }high\_res\_clock\ =\ std::chrono::high\_resolution\_clock;}
+
+\end{DoxyCode}

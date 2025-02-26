@@ -1,0 +1,5 @@
+file(GLOB_RECURSE MATHLIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+add_library(MATHLIB STATIC ${MATHLIB_SOURCES})
+
+target_include_directories(MATHLIB PRIVATE "${PROJECT_SOURCE_DIR}/src/include")
