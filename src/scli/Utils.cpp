@@ -104,8 +104,11 @@ Utils::Logger ULOGGER("Utils");
 /* -------------------------------------------------------------------------- */
 
 str Utils::GetPageDequeStr(std::deque<Page*> deq) {
-    std::string result = "root";
+    std::string result = "root/";
     for (size_t i = 0; i < deq.size(); ++i) {
+        if (i == deq.size() - 1) {  // Highlight the last (current) page
+            result += SStyle::white;
+        }
         result += deq[i]->getName();
         if (i != deq.size() - 1) {
             result += "/";

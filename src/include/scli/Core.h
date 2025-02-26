@@ -23,6 +23,7 @@
 /* -------------------------------------------------------------------------- */
 /*                 Main functions exposed through the SCLICore                */
 /* -------------------------------------------------------------------------- */
+enum EPostCmdAction { CONTINUE, RERUN, RERUN_FIRST_LOOP, EXIT, EXIT_CMD_CTX };
 namespace Core {
 
 void MAIN(
@@ -36,6 +37,7 @@ void DISPLAY_PAGE(const Page& pPage);
 void DISPLAY_CMDS(const Page& pPage);
 void SET_FLAG(const str& flagName, bool val);
 void REGISTER_TOP_LEVEL(uptr<Page>&& pPage);
+EPostCmdAction GET_INTERNAL_CMD_RESULT(const str& cmd);
 
 Page* GET_CURRENT_PAGE();
 Page* GET_LAST_PAGE();

@@ -171,15 +171,9 @@ bool isRootPageActive() { return PAGE_DEQUE.empty(); }
 
 // ? Internal commands
 
-enum EPostCmdAction {
-    CONTINUE,
-    RERUN,
-    RERUN_FIRST_LOOP,
-    EXIT
-};  // todo currently this serves no purpose, might have to get rid of it later
-
 EPostCmdAction Exit() { return EXIT; }
-
+EPostCmdAction ExitCmd() { return EXIT_CMD_CTX; }
+EPostCmdAction Root() { return RERUN_FIRST_LOOP; }
 EPostCmdAction Back() {
     if (PAGE_DEQUE.size() >= 1) {
         PAGE_DEQUE.pop_back();
@@ -191,17 +185,17 @@ EPostCmdAction Back() {
 
 std::unordered_map<str, std::function<EPostCmdAction()>> CmdFuncMap;
 
-EPostCmdAction HandleInternalCommands(const str& inp) {
-    EPostCmdAction ret = EXIT;
-    if (CmdFuncMap.contains(inp)) {
-        ret = CmdFuncMap[inp]();
-    }
-    return ret;
-}
-
 /* -------------------------------------------------------------------------- */
 /*                      Core functions exposed through .h                     */
 /* -------------------------------------------------------------------------- */
+
+EPostCmdAction Core::GET_INTERNAL_CMD_RESULT(const str& cmd) {
+    EPostCmdAction ret = CONTINUE;
+    if (CmdFuncMap.contains(cmd)) {
+        ret = CmdFuncMap[cmd]();
+    }
+    return ret;
+}
 
 void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
     system("cls");
@@ -211,12 +205,14 @@ void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
         // ? Set the internal commands up
         CmdFuncMap["e"] = Exit;
         CmdFuncMap["exit"] = Exit;
+        CmdFuncMap["!e"] = ExitCmd;
         CmdFuncMap["b"] = Back;
         CmdFuncMap["back"] = Back;
+        CmdFuncMap["r"] = Root;
+        CmdFuncMap["root"] = Root;
 
-        // todo: ok so the first page should always stay, thats the root page
-        // todo: idk how to handle that exactly but yeah, cant think of it now, im out of time
-        // todo: Probably handle the "unable to backtrack" on the back command with checking if the page_deque is empty? and keep the TOP_LEVEL_PAGES variable? idk pls experiment with it, dear future me
+        IS_COMMAND_MODE =
+            false;  // this should probably be here, remove later if weird shit happens
 
         std::deque<Page*> emptyDeq;
         PAGE_DEQUE.swap(emptyDeq);
@@ -255,7 +251,7 @@ void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
     // ? Is the input empty? (ie: enter pressed) just rerun the loop
     inp = getValidInput();
 
-    EPostCmdAction res = HandleInternalCommands(inp);
+    EPostCmdAction res = Core::GET_INTERNAL_CMD_RESULT(inp);
 
     bool shouldExit = false;
     switch (res) {
@@ -269,6 +265,8 @@ void Core::MAIN(bool isFirstLoop, str carryOverMsg) {
             break;
         case EXIT:
             shouldExit = true;  // lol
+            break;
+        case EXIT_CMD_CTX:  // We dont have to do anything with this cuz we are not in command context
             break;
     }
 

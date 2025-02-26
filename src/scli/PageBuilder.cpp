@@ -41,7 +41,7 @@ void Builder::BEGIN() {
 
     // ? Vectors
     uptr<Page> vectors =
-        std::make_unique<Page>("Vectors", "THIS IS TESTING, Do later!!");
+        std::make_unique<Page>("Vectors", "Math with vectors!");
 
     /* ----------------------------- Vector commands ---------------------------- */
 
@@ -65,5 +65,6 @@ void Builder::BEGIN() {
                     "{:.4f}ms! Starting in a second...",
                     dur.count()));
 
+    // Ha! You got bamboozled! it actually starts in 2 seconds, not one >:)
     std::this_thread::sleep_for(std::chrono::seconds(2));
 }

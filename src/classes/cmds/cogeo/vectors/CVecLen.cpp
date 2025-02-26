@@ -18,6 +18,7 @@
 #include "scli/classes/cmds/cogeo/vectors/CVecLen.h"
 
 #include "mathlib/vectors.h"
+#include "scli/Core.h"
 #include "scli/Utils.h"
 #include "scli/classes/Command.h"
 #include "types/general.h"
@@ -67,6 +68,12 @@ ECommandResult CVecLen::Run(bool isFirst) {
     Logger.Out("Gib me vector!");
 
     str inp = Logger.In();
+
+    // Internals
+    EPostCmdAction res = Core::GET_INTERNAL_CMD_RESULT(inp);
+    if (res == EXIT_CMD_CTX) {
+        return SUCCESS;
+    }
 
     // TODO: prob move this to utils
     vec<str> splitStr = Utils::SplitStrByDelimiter(inp, ' ');
