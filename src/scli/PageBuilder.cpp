@@ -23,48 +23,53 @@
 #include "scli/Utils.h"
 #include "scli/classes/Page.h"
 #include "scli/classes/cmds/cogeo/vectors/CVecLen.h"
+#include "scli/classes/cmds/cogeo/vectors/CVecLerp.h"
 
 Utils::Logger Logger("PageBuilder");
 
 void Builder::BEGIN() {
-    Logger.Log("Building commands and pages...");
+  Logger.Log("Building commands and pages...");
 
-    Utils::Clock clock;
-    clock.START();
+  Utils::Clock clock;
+  clock.START();
 
-    /* --------------------------- Coordinate geometry -------------------------- */
+  /* --------------------------- Coordinate geometry --------------------------
+   */
 
-    // ? CoGeo
-    uptr<Page> cogeo = std::make_unique<Page>(
-        "Coordinate Geometry",
-        "Contains categories that are related to coordinate geometry.");
+  // ? CoGeo
+  uptr<Page> cogeo = std::make_unique<Page>(
+      "Coordinate Geometry",
+      "Contains categories that are related to coordinate geometry.");
 
-    // ? Vectors
-    uptr<Page> vectors =
-        std::make_unique<Page>("Vectors", "Math with vectors!");
+  // ? Vectors
+  uptr<Page> vectors = std::make_unique<Page>("Vectors", "Math with vectors!");
 
-    /* ----------------------------- Vector commands ---------------------------- */
+  /* ----------------------------- Vector commands ----------------------------
+   */
 
-    // ? CVecLen
-    auto CVecLen = std::make_unique<Commands::CoGeo::Vectors::CVecLen>();
-    vectors->AddCommand(std::move(CVecLen));
-    //
-    //
-    //
+  // ? CVecLen
+  auto CVecLen = std::make_unique<Commands::CoGeo::Vectors::CVecLen>();
+  vectors->AddCommand(std::move(CVecLen));
 
-    cogeo->LinkChild(std::move(vectors));
+  // ? CVecLerp
+  auto CVecLerp = std::make_unique<Commands::CoGeo::Vectors::CVecLerp>();
+  vectors->AddCommand(std::move(CVecLerp));
+  //
+  //
+  //
 
-    Core::REGISTER_TOP_LEVEL(std::move(cogeo));
+  cogeo->LinkChild(std::move(vectors));
 
-    // ? END
+  Core::REGISTER_TOP_LEVEL(std::move(cogeo));
 
-    auto dur = clock.END();
+  // ? END
 
-    Logger.Log(
-        std::format("Done! Building pages and commands took approximately "
-                    "{:.4f}ms! Starting in a second...",
-                    dur.count()));
+  auto dur = clock.END();
 
-    // Ha! You got bamboozled! it actually starts in 2 seconds, not one >:)
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+  Logger.Log(std::format("Done! Building pages and commands took approximately "
+                         "{:.4f}ms! Starting in a second...",
+                         dur.count()));
+
+  // Ha! You got bamboozled! it actually starts in 2 seconds, not one >:)
+  std::this_thread::sleep_for(std::chrono::seconds(2));
 }

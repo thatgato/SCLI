@@ -1,4 +1,4 @@
-set(IS_RELEASE_BUILD ON)
+set(IS_RELEASE_BUILD OFF)
 
 # Configure different settings based on build type
 if(NOT IS_RELEASE_BUILD)
